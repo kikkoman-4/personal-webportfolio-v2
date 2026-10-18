@@ -1,0 +1,10 @@
+# Images (`src/assets/images/`)
+Place your project screenshots, portrait/avatar images, and graphic assets here.
+Import them directly in `.astro` files:
+```astro
+---
+import { Image } from 'astro:assets';
+import myProject from '@assets/images/project-1.png';
+---
+<Image src={myProject} alt="Project Preview" />
+```

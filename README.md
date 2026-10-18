@@ -17,9 +17,20 @@ A modern, high-performance successor to my personal web portfolio. Built with **
 
 ```text
 personal-webportfolio-v2/
-├── .gitignore          # Ignores build artifacts, dependencies, and AI/prompt logs
-├── README.md           # Project documentation and roadmap
-└── ...                 # Astro project files (src/, public/, astro.config.mjs)
+├── public/                 # Static assets served untouched (favicons, downloads, robots.txt)
+├── src/
+│   ├── assets/             # Optimized assets (images, icons, designs)
+│   │   ├── images/
+│   │   └── icons/
+│   ├── components/         # Reusable UI components
+│   ├── layouts/            # Page layouts (BaseLayout.astro)
+│   ├── pages/              # Astro routing (index.astro)
+│   └── styles/             # Global CSS & Design tokens
+│       ├── variables.css   # Color palette, spacing, typography tokens
+│       └── global.css      # CSS reset, base tags, utility classes
+├── astro.config.mjs        # Astro configuration
+├── tsconfig.json           # TypeScript config with path aliases (@/*, @styles/*, etc.)
+└── package.json
 ```
 
 ---
@@ -54,6 +65,3 @@ npm run preview
 
 ---
 
-## 🛡️ Git & Privacy Note
-
-This repository includes custom `.gitignore` rules targeting AI tooling directories (`.gemini/`, `.agents/`, `.brain/`, `.cursor/`, prompt transcripts, and scratch artifacts) to keep the repository clean and ensure private prompts or local logs are never tracked or pushed.
