@@ -1,0 +1,28 @@
+{
+  "name": "personal-webportfolio-v2",
+  "version": "1.0.0",
+  "description": "A modern, high-performance successor to my personal web portfolio. Built with **Astro**, **TypeScript**, and modern CSS styling to showcase projects, skills, and professional experience with snappy page loads and refined visuals.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kikkoman-4/personal-webportfolio-v2.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kikkoman-4/personal-webportfolio-v2/issues"
+  },
+  "homepage": "https://github.com/kikkoman-4/personal-webportfolio-v2#readme",
+  "dependencies": {
+    "astro": "^7.3.8",
+    "typescript": "^7.0.2"
+  },
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  }
+}

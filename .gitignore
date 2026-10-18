@@ -12,6 +12,7 @@ out/
 .next/
 .output/
 .vercel/
+.astro/
 
 # Environment Variables & Secrets
 .env
