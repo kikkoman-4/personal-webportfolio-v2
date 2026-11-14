@@ -1,4 +1,4 @@
-// slides.ts - High-Performance Solid Slide Deck Transition & Viewport Manager
+// slides.ts - Ultra-Snappy Zero-Delay Solid Slide Deck Transition & Viewport Manager
 import { gsap } from "gsap";
 import { playSlideSound } from "@scripts/audio";
 
@@ -8,16 +8,14 @@ let isAnimating = false;
 let slides: HTMLElement[] = [];
 let totalSlides = 0;
 
-// Gesture & Momentum Control Configuration
-const COOLDOWN_MS = 500; // Protection buffer against trackpad momentum bleed-through
-const WHEEL_THRESHOLD = 75; // Pixels of intentional wheel delta required at boundary
-const WHEEL_DECAY_MS = 200; // Silence window before boundary accumulator decays
-const TOUCH_THRESHOLD = 45; // Touch swipe distance required at boundary
+// Balanced Responsive Configuration: Silky Smooth Glide
+const TRANSITION_DURATION = 0.42; // Smooth 420ms glide: eased, luxurious, not rushed
+const TRANSITION_EASE = "power2.out"; // Immediate response on frame 0 with gentle, graceful deceleration
+const MIN_WHEEL_DELTA = 1; // Instant trigger on intentional scroll
+const SWIPE_THRESHOLD = 25; // Balanced 25px swipe on touchscreens
+const MOMENTUM_WINDOW_MS = 120; // Protection window against decaying trackpad tails
 
-let lastTransitionTime = 0;
-let wheelAccumulator = 0;
-let currentWheelDirection: "next" | "prev" | null = null;
-let wheelDecayTimer: number | null = null;
+let transitionEndTime = 0;
 
 // Touch tracking
 let touchStartY = 0;
@@ -70,10 +68,10 @@ export function initSlideDeck() {
 
   updateHUD(0);
 
-  // 1. Native Wheel Listener for Boundary & Screen-Fit Slide Transitions
+  // 1. Native Wheel Listener for Instant Slide Transitions
   window.addEventListener("wheel", onWheel, { passive: false });
 
-  // 2. Touch Navigation Listeners
+  // 2. Touch Navigation Listeners for Single-Swipe Transitions
   window.addEventListener("touchstart", onTouchStart, { passive: true });
   window.addEventListener("touchmove", onTouchMove, { passive: true });
   window.addEventListener("touchend", onTouchEnd, { passive: true });
@@ -129,119 +127,78 @@ export function initSlideDeck() {
 }
 
 /**
- * Wheel listener with intentional boundary threshold and zero-fade transitions.
+ * Wheel listener: Instantaneous zero-delay slide transitions.
  */
 function onWheel(e: WheelEvent) {
-  const now = Date.now();
-
-  // If transition is animating, suppress wheel events to prevent queue buildup
-  if (isAnimating) {
-    e.preventDefault();
-    return;
-  }
-
-  // During post-transition cooldown, ignore momentum from previous trackpad swipes
-  if (now - lastTransitionTime < COOLDOWN_MS) {
-    return;
-  }
-
-  // Ignore wheel events inside interactive widgets that handle their own interactions
   const target = e.target as HTMLElement | null;
-  if (target?.closest("#terminal-root, #engine-root, .canvas-viewport")) {
-    return;
+
+  // If cursor is directly inside the terminal screen and it has active scroll overflow,
+  // allow terminal internal scrolling until boundaries are reached.
+  const termScreen = target?.closest("#terminal-screen") as HTMLElement | null;
+  if (termScreen && termScreen.scrollHeight > termScreen.clientHeight + 10) {
+    const atBottom = termScreen.scrollTop >= termScreen.scrollHeight - termScreen.clientHeight - 4;
+    const atTop = termScreen.scrollTop <= 4;
+    if (e.deltaY > 0 && !atBottom) return;
+    if (e.deltaY < 0 && !atTop) return;
   }
+
+  const deltaY = e.deltaY;
+  if (Math.abs(deltaY) < MIN_WHEEL_DELTA) return;
 
   const currentSlide = slides[currentIndex];
   if (!currentSlide) return;
 
-  const deltaY = e.deltaY;
-  if (Math.abs(deltaY) < 1.5) return; // Suppress subpixel jitter
-
+  // Fallback for ultra-short landscape viewports (< 560px) where inner scrolling is active
   const inner = currentSlide.querySelector(".slide-inner") as HTMLElement | null;
-  const isScrollable = inner && inner.scrollHeight > inner.clientHeight + 10;
+  const isScrollable =
+    inner &&
+    window.innerHeight <= 560 &&
+    inner.scrollHeight > inner.clientHeight + 20;
 
-  // Case A: Slide has NO internal scrollable overflow (standard force-fit screen)
-  if (!isScrollable || !inner) {
-    e.preventDefault();
-    accumulateWheel(deltaY > 0 ? "next" : "prev", Math.abs(deltaY));
+  if (isScrollable && inner) {
+    const maxScroll = inner.scrollHeight - inner.clientHeight;
+    const scrollTop = inner.scrollTop;
+    const atTop = scrollTop <= 4;
+    const atBottom = scrollTop >= maxScroll - 6;
+
+    if (deltaY > 0 && !atBottom) return;
+    if (deltaY < 0 && !atTop) return;
+  }
+
+  e.preventDefault();
+
+  // If transition is currently animating, suppress new wheel triggers
+  if (isAnimating) {
     return;
   }
 
-  // Case B: Slide has internal scrollable overflow (e.g. ultra-short screen fallback)
-  const maxScroll = inner.scrollHeight - inner.clientHeight;
-  const scrollTop = inner.scrollTop;
-  const atTop = scrollTop <= 3;
-  const atBottom = scrollTop >= maxScroll - 4;
+  const now = Date.now();
+  const timeSinceTransition = now - transitionEndTime;
 
-  if (deltaY > 0) {
-    // Scrolling DOWN
-    if (!atBottom) {
-      resetWheelAccumulator();
+  // Filter lingering trackpad momentum tail (low deltas within 100ms of finish)
+  // while allowing deliberate mouse wheel clicks (|deltaY| >= 25 or deltaMode !== 0) instantly
+  if (timeSinceTransition < MOMENTUM_WINDOW_MS) {
+    if (e.deltaMode === 0 && Math.abs(deltaY) < 25) {
       return;
-    } else {
-      e.preventDefault();
-      accumulateWheel("next", deltaY);
-    }
-  } else if (deltaY < 0) {
-    // Scrolling UP
-    if (!atTop) {
-      resetWheelAccumulator();
-      return;
-    } else {
-      e.preventDefault();
-      accumulateWheel("prev", Math.abs(deltaY));
     }
   }
+
+  const direction = deltaY > 0 ? "next" : "prev";
+  const targetIndex = direction === "next" ? currentIndex + 1 : currentIndex - 1;
+  if (targetIndex < 0 || targetIndex >= totalSlides) return;
+
+  goToSlide(targetIndex);
 }
 
 /**
- * Accumulates intentional overscroll delta at slide boundaries with decay timer.
- */
-function accumulateWheel(direction: "next" | "prev", amount: number) {
-  if (currentWheelDirection !== direction) {
-    wheelAccumulator = 0;
-    currentWheelDirection = direction;
-  }
-
-  wheelAccumulator += amount;
-
-  if (wheelDecayTimer) {
-    window.clearTimeout(wheelDecayTimer);
-  }
-
-  if (wheelAccumulator >= WHEEL_THRESHOLD) {
-    resetWheelAccumulator();
-    if (direction === "next" && currentIndex < totalSlides - 1) {
-      goToSlide(currentIndex + 1);
-    } else if (direction === "prev" && currentIndex > 0) {
-      goToSlide(currentIndex - 1);
-    }
-    return;
-  }
-
-  // Decay accumulator if no subsequent wheel events occur within decay window
-  wheelDecayTimer = window.setTimeout(() => {
-    resetWheelAccumulator();
-  }, WHEEL_DECAY_MS);
-}
-
-function resetWheelAccumulator() {
-  wheelAccumulator = 0;
-  currentWheelDirection = null;
-  if (wheelDecayTimer) {
-    window.clearTimeout(wheelDecayTimer);
-    wheelDecayTimer = null;
-  }
-}
-
-/**
- * Touch handlers with distinct boundary overscroll detection for mobile devices.
+ * Touch handlers: Instantaneous swipe response on mobile devices.
  */
 function onTouchStart(e: TouchEvent) {
   if (e.touches.length !== 1) return;
 
   const target = e.target as HTMLElement | null;
-  if (target?.closest("#terminal-root, #engine-root, .canvas-viewport")) {
+  const termScreen = target?.closest("#terminal-screen") as HTMLElement | null;
+  if (termScreen && termScreen.scrollHeight > termScreen.clientHeight + 10) {
     isTouchActive = false;
     return;
   }
@@ -254,51 +211,19 @@ function onTouchStart(e: TouchEvent) {
 function onTouchMove(e: TouchEvent) {
   if (!isTouchActive || e.touches.length !== 1) return;
 
-  const now = Date.now();
-  if (isAnimating || now - lastTransitionTime < COOLDOWN_MS) return;
-
   const currentY = e.touches[0].clientY;
   const currentX = e.touches[0].clientX;
   const diffY = touchStartY - currentY; // Positive = swipe UP (advance), Negative = swipe DOWN (return)
   const diffX = touchStartX - currentX;
 
-  // Ignore predominantly horizontal gestures
+  // Ignore horizontal gestures
   if (Math.abs(diffX) > Math.abs(diffY)) return;
 
-  const currentSlide = slides[currentIndex];
-  if (!currentSlide) return;
-
-  const inner = currentSlide.querySelector(".slide-inner") as HTMLElement | null;
-  const isScrollable = inner && inner.scrollHeight > inner.clientHeight + 10;
-
-  // Slide has NO overflow
-  if (!isScrollable || !inner) {
-    if (Math.abs(diffY) > TOUCH_THRESHOLD) {
-      isTouchActive = false;
-      if (diffY > 0 && currentIndex < totalSlides - 1) {
-        goToSlide(currentIndex + 1);
-      } else if (diffY < 0 && currentIndex > 0) {
-        goToSlide(currentIndex - 1);
-      }
-    }
-    return;
-  }
-
-  // Slide HAS overflow (ultra-short viewport)
-  const maxScroll = inner.scrollHeight - inner.clientHeight;
-  const scrollTop = inner.scrollTop;
-  const atTop = scrollTop <= 3;
-  const atBottom = scrollTop >= maxScroll - 4;
-
-  if (diffY > TOUCH_THRESHOLD && atBottom) {
+  if (Math.abs(diffY) > SWIPE_THRESHOLD) {
     isTouchActive = false;
-    if (currentIndex < totalSlides - 1) {
-      goToSlide(currentIndex + 1);
-    }
-  } else if (diffY < -TOUCH_THRESHOLD && atTop) {
-    isTouchActive = false;
-    if (currentIndex > 0) {
-      goToSlide(currentIndex - 1);
+    const targetIndex = diffY > 0 ? currentIndex + 1 : currentIndex - 1;
+    if (targetIndex >= 0 && targetIndex < totalSlides) {
+      goToSlide(targetIndex);
     }
   }
 }
@@ -321,34 +246,13 @@ function onKeyDown(e: KeyboardEvent) {
     return;
   }
 
-  const currentSlide = slides[currentIndex];
-  const inner = currentSlide?.querySelector(".slide-inner") as HTMLElement | null;
-  const hasOverflow = inner && inner.scrollHeight > inner.clientHeight + 10;
-  const maxScroll = inner ? inner.scrollHeight - inner.clientHeight : 0;
-
   if (e.key === "ArrowDown" || e.key === "PageDown" || (e.key === " " && !e.shiftKey)) {
     e.preventDefault();
-    if (hasOverflow && inner) {
-      const atBottom = inner.scrollTop >= maxScroll - 6;
-      if (!atBottom) {
-        const scrollAmount = e.key === "ArrowDown" ? 180 : inner.clientHeight * 0.75;
-        inner.scrollBy({ top: scrollAmount, behavior: "smooth" });
-        return;
-      }
-    }
     if (currentIndex < totalSlides - 1) {
       goToSlide(currentIndex + 1);
     }
   } else if (e.key === "ArrowUp" || e.key === "PageUp" || (e.key === " " && e.shiftKey)) {
     e.preventDefault();
-    if (hasOverflow && inner) {
-      const atTop = inner.scrollTop <= 6;
-      if (!atTop) {
-        const scrollAmount = e.key === "ArrowUp" ? -180 : -inner.clientHeight * 0.75;
-        inner.scrollBy({ top: scrollAmount, behavior: "smooth" });
-        return;
-      }
-    }
     if (currentIndex > 0) {
       goToSlide(currentIndex - 1);
     }
@@ -362,7 +266,7 @@ function onKeyDown(e: KeyboardEvent) {
 }
 
 /**
- * Transitions to target slide with solid, crisp, zero-fade push presentation animation.
+ * Transitions to target slide with instant, solid, zero-fade push presentation animation.
  */
 export function goToSlide(targetIndex: number, immediate = false) {
   if (targetIndex === currentIndex && !immediate) return;
@@ -375,14 +279,12 @@ export function goToSlide(targetIndex: number, immediate = false) {
   const nextSlide = slides[targetIndex];
 
   isAnimating = true;
-  lastTransitionTime = Date.now();
   currentIndex = targetIndex;
-  resetWheelAccumulator();
 
   updateHUD(targetIndex);
   playSlideSound(isNext ? 1 : -1);
 
-  // Always reset target slide scroll position to top instantly
+  // Reset target slide scroll position to top instantly
   const targetInner = nextSlide.querySelector(".slide-inner") as HTMLElement | null;
   if (targetInner) {
     targetInner.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
@@ -422,10 +324,14 @@ export function goToSlide(targetIndex: number, immediate = false) {
       }
     });
     isAnimating = false;
+    transitionEndTime = Date.now();
     return;
   }
 
-  // Solid Crisp Slide Transition - ZERO FADING (100% Opacity)
+  // Kill running tweens to ensure clean state
+  gsap.killTweensOf([currentSlide, nextSlide]);
+
+  // Position next slide immediately offscreen in incoming direction
   gsap.set(nextSlide, {
     yPercent: isNext ? 100 : -100,
     zIndex: 20,
@@ -436,8 +342,19 @@ export function goToSlide(targetIndex: number, immediate = false) {
     opacity: 1,
   });
 
-  const tl = gsap.timeline({
-    defaults: { ease: "power2.inOut", duration: 0.52 },
+  // Solid push with instant peak velocity (power3.out) - zero delay
+  gsap.to(currentSlide, {
+    yPercent: isNext ? -100 : 100,
+    duration: TRANSITION_DURATION,
+    ease: TRANSITION_EASE,
+    overwrite: "auto",
+  });
+
+  gsap.to(nextSlide, {
+    yPercent: 0,
+    duration: TRANSITION_DURATION,
+    ease: TRANSITION_EASE,
+    overwrite: "auto",
     onComplete: () => {
       currentSlide.classList.remove("active");
       nextSlide.classList.add("active");
@@ -453,7 +370,7 @@ export function goToSlide(targetIndex: number, immediate = false) {
         opacity: 1,
       });
 
-      // Confirm next slide position
+      // Confirm next slide active position
       gsap.set(nextSlide, {
         zIndex: 10,
         yPercent: 0,
@@ -462,30 +379,9 @@ export function goToSlide(targetIndex: number, immediate = false) {
       });
 
       isAnimating = false;
-      lastTransitionTime = Date.now();
+      transitionEndTime = Date.now();
     },
   });
-
-  // Solid push: Outgoing slide pushes off-screen, incoming slide slides into place
-  tl.to(
-    currentSlide,
-    {
-      yPercent: isNext ? -100 : 100,
-      duration: 0.52,
-      ease: "power2.inOut",
-    },
-    0
-  );
-
-  tl.to(
-    nextSlide,
-    {
-      yPercent: 0,
-      duration: 0.52,
-      ease: "power2.inOut",
-    },
-    0
-  );
 }
 
 /**
@@ -548,7 +444,8 @@ function updateHUD(targetIndex: number) {
     document.querySelectorAll<HTMLAnchorElement>(".nav-links .nav-item").forEach((item) => {
       const href = item.getAttribute("href")?.replace("#", "");
       // Support matching section groups
-      const isMatch = href === anchor ||
+      const isMatch =
+        href === anchor ||
         (href === "projects" && (anchor === "projects" || anchor === "works-engines")) ||
         (href === "experience" && (anchor === "experience" || anchor === "leadership"));
       item.classList.toggle("active", isMatch);
