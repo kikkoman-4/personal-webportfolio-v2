@@ -1,17 +1,32 @@
-// slides.ts - GSAP & Observer powered PowerPoint-style Presentation Slide Deck
+// slides.ts - High-Performance Slide Deck Transition & Smooth Content Scroll Manager
 import { gsap } from "gsap";
-import { Observer } from "gsap/Observer";
 import { playSlideSound } from "@scripts/audio";
 
-gsap.registerPlugin(Observer);
-
+let isInitialized = false;
 let currentIndex = 0;
 let isAnimating = false;
 let slides: HTMLElement[] = [];
 let totalSlides = 0;
 
+// Gesture & Momentum Control Configuration
+const COOLDOWN_MS = 600; // Protection buffer against trackpad momentum bleed-through
+const WHEEL_THRESHOLD = 85; // Pixels of intentional wheel delta required at boundary
+const WHEEL_DECAY_MS = 220; // Silence window before boundary accumulator decays
+const TOUCH_THRESHOLD = 50; // Touch swipe distance required at boundary
+
+let lastTransitionTime = 0;
+let wheelAccumulator = 0;
+let currentWheelDirection: "next" | "prev" | null = null;
+let wheelDecayTimer: number | null = null;
+
+// Touch tracking
+let touchStartY = 0;
+let touchStartX = 0;
+let isTouchActive = false;
+
 export function initSlideDeck() {
   if (typeof window === "undefined") return;
+  if (isInitialized) return;
 
   const stage = document.getElementById("slides-stage");
   if (!stage) return;
@@ -20,11 +35,13 @@ export function initSlideDeck() {
   totalSlides = slides.length;
   if (totalSlides === 0) return;
 
+  isInitialized = true;
+
   // Set document/body class for slide deck presentation styling
   document.documentElement.classList.add("slide-deck-mode");
   document.body.classList.add("slide-deck-mode");
 
-  // Initial layout: slide 0 is active and visible, others placed below
+  // Initial layout: slide 0 is active and visible, others positioned below
   slides.forEach((slide, i) => {
     if (i === 0) {
       gsap.set(slide, {
@@ -41,7 +58,7 @@ export function initSlideDeck() {
         yPercent: 100,
         opacity: 0,
         autoAlpha: 0,
-        scale: 0.95,
+        scale: 0.96,
         zIndex: 1,
         pointerEvents: "none",
       });
@@ -51,51 +68,19 @@ export function initSlideDeck() {
 
   updateHUD(0);
 
-  // 1. Gesture Navigation via GSAP Observer (wheel, touch swipe, trackpad)
-  Observer.create({
-    target: window,
-    type: "wheel,touch,pointer",
-    wheelSpeed: -1, // Normalizes wheel down to trigger onUp (Next Slide)
-    tolerance: 20,
-    preventDefault: false, // Allows natural text selection, terminal typing & input interaction
-    onUp: (self) => {
-      // Swiping up on mobile or scrolling wheel down -> Next slide
-      handleGesture("next", self.event);
-    },
-    onDown: (self) => {
-      // Swiping down on mobile or scrolling wheel up -> Previous slide
-      handleGesture("prev", self.event);
-    },
-  });
+  // 1. Native Wheel Listener for Precise Boundary & Content Scroll Detection
+  window.addEventListener("wheel", onWheel, { passive: false });
 
-  // 2. Keyboard Navigation (PowerPoint standard: Arrow keys, PageDown/Up, Spacebar)
-  window.addEventListener("keydown", (e) => {
-    const active = document.activeElement;
-    if (
-      active &&
-      (active.tagName === "INPUT" ||
-        active.tagName === "TEXTAREA" ||
-        (active as HTMLElement).isContentEditable)
-    ) {
-      return;
-    }
+  // 2. Touch Navigation Listeners
+  window.addEventListener("touchstart", onTouchStart, { passive: true });
+  window.addEventListener("touchmove", onTouchMove, { passive: true });
+  window.addEventListener("touchend", onTouchEnd, { passive: true });
+  window.addEventListener("touchcancel", onTouchEnd, { passive: true });
 
-    if (e.key === "ArrowDown" || e.key === "PageDown" || (e.key === " " && !e.shiftKey)) {
-      e.preventDefault();
-      handleGesture("next");
-    } else if (e.key === "ArrowUp" || e.key === "PageUp" || (e.key === " " && e.shiftKey)) {
-      e.preventDefault();
-      handleGesture("prev");
-    } else if (e.key === "Home") {
-      e.preventDefault();
-      goToSlide(0);
-    } else if (e.key === "End") {
-      e.preventDefault();
-      goToSlide(totalSlides - 1);
-    }
-  });
+  // 3. Keyboard Navigation (PowerPoint standard: Arrow keys, PageDown/Up, Spacebar)
+  window.addEventListener("keydown", onKeyDown);
 
-  // 3. UI Controls: Prev & Next Buttons
+  // 4. UI Controls: Prev & Next Buttons
   const prevBtn = document.getElementById("deck-prev-btn");
   const nextBtn = document.getElementById("deck-next-btn");
 
@@ -107,7 +92,7 @@ export function initSlideDeck() {
     goToSlide(currentIndex + 1);
   });
 
-  // 4. UI Controls: Slide Rail Pips
+  // 5. UI Controls: Slide Rail Pips
   document.querySelectorAll<HTMLButtonElement>(".slide-pip").forEach((pip) => {
     pip.addEventListener("click", () => {
       const idx = parseInt(pip.getAttribute("data-goto") || "0", 10);
@@ -115,7 +100,7 @@ export function initSlideDeck() {
     });
   });
 
-  // 5. Intercept internal navigation anchors (#home, #about, #projects, etc.)
+  // 6. Intercept internal navigation anchors (#home, #about, #projects, etc.)
   document.addEventListener("click", (e) => {
     const link = (e.target as HTMLElement)?.closest("a") as HTMLAnchorElement | null;
     if (!link) return;
@@ -131,7 +116,7 @@ export function initSlideDeck() {
     }
   });
 
-  // 6. Support Deep Links / Hash Navigation
+  // 7. Support Deep Links / Hash Navigation
   if (window.location.hash) {
     const anchor = window.location.hash.replace("#", "");
     const targetIdx = slides.findIndex((s) => s.dataset.anchor === anchor);
@@ -142,20 +127,194 @@ export function initSlideDeck() {
 }
 
 /**
- * Validates scroll boundaries on the active slide before advancing.
- * If the slide has internal overflow, it allows smooth inner scrolling first.
+ * High-precision wheel listener separating internal content scroll from segment transitions.
  */
-function handleGesture(direction: "next" | "prev", event?: Event) {
-  if (isAnimating) return;
+function onWheel(e: WheelEvent) {
+  const now = Date.now();
 
-  // Don't intercept clicks or typing inside the interactive terminal
-  if (event) {
-    const target = event.target as HTMLElement | null;
-    if (target?.closest("#terminal-root")) {
-      return;
-    }
+  // If transition is animating, suppress wheel events to prevent conflicting scroll queues
+  if (isAnimating) {
+    e.preventDefault();
+    return;
   }
 
+  // During post-transition cooldown, ignore momentum from previous trackpad swipes
+  if (now - lastTransitionTime < COOLDOWN_MS) {
+    return;
+  }
+
+  // Ignore wheel events inside interactive widgets that handle their own interactions
+  const target = e.target as HTMLElement | null;
+  if (target?.closest("#terminal-root, #engine-root, .canvas-viewport")) {
+    return;
+  }
+
+  const currentSlide = slides[currentIndex];
+  if (!currentSlide) return;
+
+  const deltaY = e.deltaY;
+  if (Math.abs(deltaY) < 1.5) return; // Suppress subpixel jitter
+
+  const inner = currentSlide.querySelector(".slide-inner") as HTMLElement | null;
+  const isScrollable = inner && inner.scrollHeight > inner.clientHeight + 10;
+
+  // Case A: Slide has NO internal scrollable overflow (e.g. Hero on desktop)
+  if (!isScrollable || !inner) {
+    e.preventDefault();
+    accumulateWheel(deltaY > 0 ? "next" : "prev", Math.abs(deltaY));
+    return;
+  }
+
+  // Case B: Slide HAS internal scrollable overflow
+  const maxScroll = inner.scrollHeight - inner.clientHeight;
+  const scrollTop = inner.scrollTop;
+  const atTop = scrollTop <= 3;
+  const atBottom = scrollTop >= maxScroll - 4;
+
+  if (deltaY > 0) {
+    // Scrolling DOWN
+    if (!atBottom) {
+      // Content is scrolling down inside the slide -> let browser scroll naturally
+      resetWheelAccumulator();
+      return;
+    } else {
+      // At bottom boundary -> accumulate intentional overscroll for next slide
+      e.preventDefault();
+      accumulateWheel("next", deltaY);
+    }
+  } else if (deltaY < 0) {
+    // Scrolling UP
+    if (!atTop) {
+      // Content is scrolling up inside the slide -> let browser scroll naturally
+      resetWheelAccumulator();
+      return;
+    } else {
+      // At top boundary -> accumulate intentional overscroll for previous slide
+      e.preventDefault();
+      accumulateWheel("prev", Math.abs(deltaY));
+    }
+  }
+}
+
+/**
+ * Accumulates intentional overscroll delta at slide boundaries with decay timer.
+ */
+function accumulateWheel(direction: "next" | "prev", amount: number) {
+  if (currentWheelDirection !== direction) {
+    wheelAccumulator = 0;
+    currentWheelDirection = direction;
+  }
+
+  wheelAccumulator += amount;
+
+  if (wheelDecayTimer) {
+    window.clearTimeout(wheelDecayTimer);
+  }
+
+  if (wheelAccumulator >= WHEEL_THRESHOLD) {
+    resetWheelAccumulator();
+    if (direction === "next" && currentIndex < totalSlides - 1) {
+      goToSlide(currentIndex + 1);
+    } else if (direction === "prev" && currentIndex > 0) {
+      goToSlide(currentIndex - 1);
+    }
+    return;
+  }
+
+  // Decay accumulator if no subsequent wheel events occur within decay window
+  wheelDecayTimer = window.setTimeout(() => {
+    resetWheelAccumulator();
+  }, WHEEL_DECAY_MS);
+}
+
+function resetWheelAccumulator() {
+  wheelAccumulator = 0;
+  currentWheelDirection = null;
+  if (wheelDecayTimer) {
+    window.clearTimeout(wheelDecayTimer);
+    wheelDecayTimer = null;
+  }
+}
+
+/**
+ * Touch handlers with distinct boundary overscroll detection for mobile devices.
+ */
+function onTouchStart(e: TouchEvent) {
+  if (e.touches.length !== 1) return;
+
+  const target = e.target as HTMLElement | null;
+  if (target?.closest("#terminal-root, #engine-root, .canvas-viewport")) {
+    isTouchActive = false;
+    return;
+  }
+
+  isTouchActive = true;
+  touchStartY = e.touches[0].clientY;
+  touchStartX = e.touches[0].clientX;
+}
+
+function onTouchMove(e: TouchEvent) {
+  if (!isTouchActive || e.touches.length !== 1) return;
+
+  const now = Date.now();
+  if (isAnimating || now - lastTransitionTime < COOLDOWN_MS) return;
+
+  const currentY = e.touches[0].clientY;
+  const currentX = e.touches[0].clientX;
+  const diffY = touchStartY - currentY; // Positive = swipe UP (advance), Negative = swipe DOWN (return)
+  const diffX = touchStartX - currentX;
+
+  // Ignore predominantly horizontal gestures
+  if (Math.abs(diffX) > Math.abs(diffY)) return;
+
+  const currentSlide = slides[currentIndex];
+  if (!currentSlide) return;
+
+  const inner = currentSlide.querySelector(".slide-inner") as HTMLElement | null;
+  const isScrollable = inner && inner.scrollHeight > inner.clientHeight + 10;
+
+  // Slide has NO overflow
+  if (!isScrollable || !inner) {
+    if (Math.abs(diffY) > TOUCH_THRESHOLD) {
+      isTouchActive = false;
+      if (diffY > 0 && currentIndex < totalSlides - 1) {
+        goToSlide(currentIndex + 1);
+      } else if (diffY < 0 && currentIndex > 0) {
+        goToSlide(currentIndex - 1);
+      }
+    }
+    return;
+  }
+
+  // Slide HAS overflow
+  const maxScroll = inner.scrollHeight - inner.clientHeight;
+  const scrollTop = inner.scrollTop;
+  const atTop = scrollTop <= 3;
+  const atBottom = scrollTop >= maxScroll - 4;
+
+  if (diffY > TOUCH_THRESHOLD && atBottom) {
+    // Swiped up while already at the bottom of content
+    isTouchActive = false;
+    if (currentIndex < totalSlides - 1) {
+      goToSlide(currentIndex + 1);
+    }
+  } else if (diffY < -TOUCH_THRESHOLD && atTop) {
+    // Swiped down while already at the top of content
+    isTouchActive = false;
+    if (currentIndex > 0) {
+      goToSlide(currentIndex - 1);
+    }
+  }
+}
+
+function onTouchEnd() {
+  isTouchActive = false;
+}
+
+/**
+ * Keyboard navigation with content scroll awareness.
+ */
+function onKeyDown(e: KeyboardEvent) {
   const active = document.activeElement;
   if (
     active &&
@@ -167,30 +326,44 @@ function handleGesture(direction: "next" | "prev", event?: Event) {
   }
 
   const currentSlide = slides[currentIndex];
-  if (!currentSlide) return;
+  const inner = currentSlide?.querySelector(".slide-inner") as HTMLElement | null;
+  const hasOverflow = inner && inner.scrollHeight > inner.clientHeight + 10;
+  const maxScroll = inner ? inner.scrollHeight - inner.clientHeight : 0;
 
-  const inner = currentSlide.querySelector(".slide-inner") as HTMLElement | null;
-  if (inner) {
-    const hasOverflow = inner.scrollHeight > inner.clientHeight + 6;
-    if (hasOverflow) {
-      if (direction === "next") {
-        const atBottom = inner.scrollTop + inner.clientHeight >= inner.scrollHeight - 8;
-        if (!atBottom) return; // Allow inner container to finish scrolling
-      } else {
-        const atTop = inner.scrollTop <= 8;
-        if (!atTop) return; // Allow inner container to scroll up
+  if (e.key === "ArrowDown" || e.key === "PageDown" || (e.key === " " && !e.shiftKey)) {
+    e.preventDefault();
+    if (hasOverflow && inner) {
+      const atBottom = inner.scrollTop >= maxScroll - 6;
+      if (!atBottom) {
+        // Smoothly scroll content inside the slide
+        const scrollAmount = e.key === "ArrowDown" ? 180 : inner.clientHeight * 0.75;
+        inner.scrollBy({ top: scrollAmount, behavior: "smooth" });
+        return;
       }
     }
-  }
-
-  if (direction === "next") {
     if (currentIndex < totalSlides - 1) {
       goToSlide(currentIndex + 1);
     }
-  } else {
+  } else if (e.key === "ArrowUp" || e.key === "PageUp" || (e.key === " " && e.shiftKey)) {
+    e.preventDefault();
+    if (hasOverflow && inner) {
+      const atTop = inner.scrollTop <= 6;
+      if (!atTop) {
+        // Smoothly scroll content inside the slide
+        const scrollAmount = e.key === "ArrowUp" ? -180 : -inner.clientHeight * 0.75;
+        inner.scrollBy({ top: scrollAmount, behavior: "smooth" });
+        return;
+      }
+    }
     if (currentIndex > 0) {
       goToSlide(currentIndex - 1);
     }
+  } else if (e.key === "Home") {
+    e.preventDefault();
+    goToSlide(0);
+  } else if (e.key === "End") {
+    e.preventDefault();
+    goToSlide(totalSlides - 1);
   }
 }
 
@@ -208,15 +381,17 @@ export function goToSlide(targetIndex: number, immediate = false) {
   const nextSlide = slides[targetIndex];
 
   isAnimating = true;
+  lastTransitionTime = Date.now();
   currentIndex = targetIndex;
+  resetWheelAccumulator();
 
   updateHUD(targetIndex);
   playSlideSound(isNext ? 1 : -1);
 
-  // Position inner scroll position appropriately
+  // Always reset target slide scroll position to top instantly
   const targetInner = nextSlide.querySelector(".slide-inner") as HTMLElement | null;
   if (targetInner) {
-    targetInner.scrollTop = isNext ? 0 : Math.max(0, targetInner.scrollHeight - targetInner.clientHeight);
+    targetInner.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
   }
 
   if (immediate) {
@@ -233,10 +408,10 @@ export function goToSlide(targetIndex: number, immediate = false) {
         });
       } else {
         gsap.set(s, {
-          yPercent: idx < targetIndex ? -25 : 100,
+          yPercent: idx < targetIndex ? -35 : 100,
           opacity: 0,
           autoAlpha: 0,
-          scale: 0.95,
+          scale: 0.96,
           zIndex: 1,
           pointerEvents: "none",
         });
@@ -246,9 +421,9 @@ export function goToSlide(targetIndex: number, immediate = false) {
     return;
   }
 
-  // PowerPoint-style Slide Transition Timeline
+  // Smooth slide transition timeline
   const tl = gsap.timeline({
-    defaults: { ease: "power3.out" },
+    defaults: { ease: "power2.out" },
     onComplete: () => {
       currentSlide.classList.remove("active");
       nextSlide.classList.add("active");
@@ -257,70 +432,81 @@ export function goToSlide(targetIndex: number, immediate = false) {
         autoAlpha: 0,
         zIndex: 1,
         pointerEvents: "none",
+        yPercent: isNext ? -35 : 100,
+        opacity: 0,
       });
+
       gsap.set(nextSlide, {
         zIndex: 10,
         pointerEvents: "auto",
+        yPercent: 0,
+        opacity: 1,
+        scale: 1,
       });
+
       isAnimating = false;
+      lastTransitionTime = Date.now();
     },
   });
 
-  // Activate next slide visibility immediately
+  // Activate incoming slide
   gsap.set(nextSlide, {
     autoAlpha: 1,
     zIndex: 20,
     pointerEvents: "auto",
   });
 
-  // 1. Current Slide Moves Out: shifts away with a smooth scale-down
+  // 1. Current Slide Moves Out: smooth slide with subtle depth scale
   tl.to(
     currentSlide,
     {
-      yPercent: isNext ? -20 : 100,
+      yPercent: isNext ? -35 : 100,
       opacity: 0,
-      scale: isNext ? 0.94 : 0.98,
-      duration: 0.75,
+      scale: isNext ? 0.95 : 0.98,
+      duration: 0.65,
+      ease: "power2.inOut",
     },
     0
   );
 
-  // 2. Next Slide Moves In: rises/slides into view with scale and full opacity
+  // 2. Next Slide Moves In: rises/drops into place smoothly
   tl.fromTo(
     nextSlide,
     {
-      yPercent: isNext ? 100 : -20,
+      yPercent: isNext ? 100 : -35,
       opacity: 0,
-      scale: isNext ? 0.98 : 0.94,
+      scale: isNext ? 0.98 : 0.95,
     },
     {
       yPercent: 0,
       opacity: 1,
       scale: 1,
-      duration: 0.75,
+      duration: 0.65,
+      ease: "power2.out",
     },
     0
   );
 
-  // 3. Staggered Content Presentation Reveal inside Incoming Slide
+  // 3. Staggered Content Reveal
   const revealTargets = nextSlide.querySelectorAll(
-    ".hero-badge, .hero-headline, .hero-bio, .hero-actions, .section-header, .bento-card, .project-card, .exp-card, .skill-group, .contact-box"
+    ".hero-badge, .hero-headline, .hero-bio, .hero-actions, .section-header, .bento-card, .project-card, .timeline-item, .category-card, .certs-strip, .contact-box"
   );
   if (revealTargets.length > 0) {
     tl.fromTo(
       revealTargets,
       {
-        y: isNext ? 18 : -18,
+        y: isNext ? 22 : -22,
         opacity: 0,
       },
       {
         y: 0,
         opacity: 1,
         duration: 0.45,
-        stagger: 0.04,
+        stagger: 0.035,
         ease: "power2.out",
+        clearProps: "transform,opacity",
       },
-      0.22
+      0.15
     );
   }
 }
