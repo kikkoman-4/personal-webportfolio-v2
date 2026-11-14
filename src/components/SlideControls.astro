@@ -1,0 +1,423 @@
+---
+// SlideControls.astro - Cybernetic HUD slide indicator, navigation rail, and PowerPoint controls
+interface Props {
+  total?: number;
+}
+
+const { total = 6 } = Astro.props;
+
+const slideMeta = [
+  { num: "01", label: "HOME", tag: "CORE" },
+  { num: "02", label: "ABOUT", tag: "DOSSIER" },
+  { num: "03", label: "WORKS", tag: "PORTFOLIO" },
+  { num: "04", label: "EXPERIENCE", tag: "TIMELINE" },
+  { num: "05", label: "SKILLS", tag: "ARSENAL" },
+  { num: "06", label: "CONTACT", tag: "TRANSMIT" },
+];
+---
+
+<div class="deck-controls-root" aria-label="Slide Deck Presentation Controls">
+  <!-- Right Rail: Vertical Slide Pager -->
+  <aside class="slide-rail mono-hud" aria-label="Slide Deck Navigation Rail">
+    <div class="rail-track">
+      <div class="rail-progress-line" id="rail-progress-line"></div>
+      {
+        slideMeta.map((slide, i) => (
+          <button
+            type="button"
+            class={`slide-pip ${i === 0 ? "active" : ""}`}
+            data-goto={i}
+            aria-label={`Jump to slide ${i + 1}: ${slide.label}`}
+            title={`Slide ${slide.num}: ${slide.label}`}
+          >
+            <span class="pip-dot"></span>
+            <span class="pip-num">{slide.num}</span>
+            <span class="pip-tooltip">
+              <span class="tooltip-num">{slide.num}</span>
+              <span class="tooltip-label">{slide.label}</span>
+            </span>
+          </button>
+        ))
+      }
+    </div>
+  </aside>
+
+  <!-- Bottom-Right Deck Status Dock -->
+  <div class="deck-dock glass-panel mono-hud">
+    <!-- Slide Counter & Title -->
+    <div class="dock-meta">
+      <div class="dock-slide-counter">
+        <span class="status-dot"></span>
+        <span class="label">SLIDE</span>
+        <span class="current-num" id="deck-current-num">01</span>
+        <span class="slash">/</span>
+        <span class="total-num" id="deck-total-num">06</span>
+      </div>
+      <div class="dock-slide-title" id="deck-slide-title">01 // WIREFRAME ENGINE CORE</div>
+    </div>
+
+    <!-- Mini Progress Bar -->
+    <div class="dock-progress-wrapper" aria-hidden="true">
+      <div class="dock-progress-fill" id="deck-progress-fill"></div>
+    </div>
+
+    <!-- Prev / Next Navigation Arrows -->
+    <div class="dock-nav-arrows">
+      <button
+        type="button"
+        class="deck-nav-btn btn-prev"
+        id="deck-prev-btn"
+        aria-label="Previous Slide (Arrow Up / Scroll Up)"
+        title="Previous Slide (↑ / Wheel Up)"
+        disabled
+      >
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="18 15 12 9 6 15"></polyline>
+        </svg>
+      </button>
+
+      <button
+        type="button"
+        class="deck-nav-btn btn-next"
+        id="deck-next-btn"
+        aria-label="Next Slide (Arrow Down / Scroll Down)"
+        title="Next Slide (↓ / Wheel Down / Space)"
+      >
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Bottom Helper Cue -->
+  <div class="deck-cue-pill mono-hud" id="deck-cue-pill">
+    <span class="cue-icon">↕</span>
+    <span>SWIPE / SCROLL OR USE [↑/↓] TO VIEW NEXT SLIDE</span>
+  </div>
+</div>
+
+<style>
+  /* ==========================================================================
+     Slide Deck Presentation Controls
+     ========================================================================== */
+
+  .deck-controls-root {
+    position: relative;
+    pointer-events: none;
+    z-index: 60;
+  }
+
+  /* Right Vertical Navigation Rail */
+  .slide-rail {
+    position: fixed;
+    right: calc(var(--hud-inset) + 0.75rem);
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: auto;
+    z-index: 60;
+  }
+
+  .rail-track {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    padding: 0.75rem 0.35rem;
+    background: rgba(10, 12, 16, 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  }
+
+  .rail-progress-line {
+    position: absolute;
+    left: 50%;
+    top: 0.75rem;
+    width: 2px;
+    height: 0%;
+    background: linear-gradient(to bottom, #ffffff, var(--color-accent-red));
+    transform: translateX(-50%);
+    transition: height 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity: 0.25;
+    pointer-events: none;
+  }
+
+  .slide-pip {
+    position: relative;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--color-border-subtle);
+    color: var(--color-text-muted);
+    font-size: 0.65rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    z-index: 2;
+  }
+
+  .slide-pip:hover {
+    border-color: var(--color-border-hover);
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    transform: scale(1.15);
+  }
+
+  .slide-pip.active {
+    background: #ffffff;
+    color: #000000;
+    border-color: #ffffff;
+    font-weight: 700;
+    box-shadow: 0 0 14px rgba(255, 255, 255, 0.45);
+    transform: scale(1.15);
+  }
+
+  .pip-dot {
+    display: none;
+  }
+
+  .pip-num {
+    font-size: 0.62rem;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  /* Pip Hover Tooltip */
+  .pip-tooltip {
+    position: absolute;
+    right: calc(100% + 10px);
+    top: 50%;
+    transform: translateY(-50%) translateX(6px);
+    background: rgba(6, 7, 10, 0.95);
+    border: 1px solid var(--color-border);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 0.3rem 0.6rem;
+    border-radius: var(--radius-sm);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: all var(--transition-fast);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.7);
+  }
+
+  .slide-pip:hover .pip-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-50%) translateX(0);
+  }
+
+  .tooltip-num {
+    color: var(--color-accent-red);
+    font-weight: 700;
+    font-size: 0.65rem;
+  }
+
+  .tooltip-label {
+    color: var(--color-text-main);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+  }
+
+  /* Bottom-Right Deck Status Dock */
+  .deck-dock {
+    position: fixed;
+    right: calc(var(--hud-inset) + 0.75rem);
+    bottom: calc(var(--hud-inset) + 0.75rem);
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 0.6rem 1rem;
+    background: rgba(10, 12, 16, 0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+    z-index: 60;
+    transition: all var(--transition-normal);
+  }
+
+  .dock-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .dock-slide-counter {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.7rem;
+    color: var(--color-text-sub);
+  }
+
+  .dock-slide-counter .label {
+    color: var(--color-text-hud);
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+  }
+
+  .dock-slide-counter .current-num {
+    color: #ffffff;
+    font-weight: 700;
+  }
+
+  .dock-slide-counter .slash {
+    color: var(--color-text-hud);
+  }
+
+  .dock-slide-counter .total-num {
+    color: var(--color-text-muted);
+  }
+
+  .dock-slide-title {
+    font-size: 0.65rem;
+    color: var(--color-text-muted);
+    letter-spacing: 0.06em;
+    max-width: 170px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Progress bar */
+  .dock-progress-wrapper {
+    width: 60px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .dock-progress-fill {
+    width: 16.6%;
+    height: 100%;
+    background: linear-gradient(90deg, #ffffff, var(--color-accent-green));
+    border-radius: 2px;
+    transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* Prev/Next arrows */
+  .dock-nav-arrows {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .deck-nav-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-main);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .deck-nav-btn:hover:not(:disabled) {
+    background: #ffffff;
+    color: #000000;
+    border-color: #ffffff;
+    transform: scale(1.08);
+  }
+
+  .deck-nav-btn:disabled {
+    opacity: 0.25;
+    cursor: not-allowed;
+  }
+
+  /* Bottom Cue Pill */
+  .deck-cue-pill {
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: calc(var(--hud-inset) + 0.85rem);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.85rem;
+    background: rgba(10, 12, 16, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-pill);
+    font-size: 0.68rem;
+    color: var(--color-text-sub);
+    letter-spacing: 0.08em;
+    pointer-events: none;
+    z-index: 55;
+    animation: cue-pulse 3s infinite ease-in-out;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .deck-cue-pill.hidden {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+    pointer-events: none;
+  }
+
+  .cue-icon {
+    color: var(--color-accent-green);
+    font-size: 0.85rem;
+  }
+
+  @keyframes cue-pulse {
+    0%, 100% {
+      opacity: 0.85;
+      border-color: var(--color-border-subtle);
+    }
+    50% {
+      opacity: 0.45;
+      border-color: var(--color-border-hover);
+    }
+  }
+
+  /* Mobile Adaptation */
+  @media (max-width: 860px) {
+    .slide-rail {
+      display: none;
+    }
+
+    .dock-slide-title {
+      display: none;
+    }
+
+    .dock-progress-wrapper {
+      width: 40px;
+    }
+
+    .deck-cue-pill {
+      font-size: 0.6rem;
+      padding: 0.25rem 0.65rem;
+    }
+  }
+
+  @media (max-width: 580px) {
+    .deck-cue-pill {
+      display: none;
+    }
+
+    .deck-dock {
+      right: calc(var(--hud-inset) + 0.5rem);
+      bottom: calc(var(--hud-inset) + 0.5rem);
+      padding: 0.45rem 0.75rem;
+      gap: 0.85rem;
+    }
+  }
+</style>

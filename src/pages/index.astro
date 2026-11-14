@@ -8,6 +8,7 @@ import ProjectsSection from "@components/ProjectsSection.astro";
 import ExperienceSection from "@components/ExperienceSection.astro";
 import SkillsSection from "@components/SkillsSection.astro";
 import Footer from "@components/Footer.astro";
+import SlideControls from "@components/SlideControls.astro";
 ---
 
 <BaseLayout
@@ -17,55 +18,227 @@ import Footer from "@components/Footer.astro";
   <!-- Cybernetic HUD Framing -->
   <HudFrame />
 
-  <div class="page-wrapper">
-    <!-- Navigation Bar -->
+  <div class="deck-wrapper">
+    <!-- Persistent Top Navigation Bar -->
     <Navbar
       brandName="KIKZ AFABLE"
       role="FULL-STACK & CREATIVE SOFTWARE ENGINEER"
       location="BGC, PHILIPPINES"
     />
 
-    <main id="main-content">
-      <!-- 00. Hero Landing Page -->
-      <Hero />
+    <!-- PowerPoint-Style Presentation Slides Viewport -->
+    <main id="main-content" class="slides-viewport" aria-label="Portfolio Presentation Deck">
+      <div class="slides-stage" id="slides-stage">
+        <!-- Slide 01: Hero / Wireframe Engine -->
+        <article
+          class="slide-panel active"
+          data-slide="0"
+          data-anchor="home"
+          data-title="01 // WIREFRAME ENGINE CORE"
+          id="slide-home"
+          aria-label="Slide 1 of 6: Home"
+        >
+          <div class="slide-inner">
+            <Hero />
+          </div>
+        </article>
 
-      <!-- 01. About Me (Dossier & Interactive Terminal) -->
-      <AboutSection />
+        <!-- Slide 02: About / Dossier & Interactive Terminal -->
+        <article
+          class="slide-panel"
+          data-slide="1"
+          data-anchor="about"
+          data-title="02 // SYSTEM DOSSIER & BIO"
+          id="slide-about"
+          aria-label="Slide 2 of 6: About Me"
+        >
+          <div class="slide-inner">
+            <AboutSection />
+          </div>
+        </article>
 
-      <!-- 02. Selected Works -->
-      <ProjectsSection />
+        <!-- Slide 03: Projects / Selected Works -->
+        <article
+          class="slide-panel"
+          data-slide="2"
+          data-anchor="projects"
+          data-title="03 // SELECTED WORKS"
+          id="slide-projects"
+          aria-label="Slide 3 of 6: Portfolio Projects"
+        >
+          <div class="slide-inner">
+            <ProjectsSection />
+          </div>
+        </article>
 
-      <!-- 03. Experience & Leadership -->
-      <ExperienceSection />
+        <!-- Slide 04: Experience / Timeline & Leadership -->
+        <article
+          class="slide-panel"
+          data-slide="3"
+          data-anchor="experience"
+          data-title="04 // EXPERIENCE & LEADERSHIP"
+          id="slide-experience"
+          aria-label="Slide 4 of 6: Experience"
+        >
+          <div class="slide-inner">
+            <ExperienceSection />
+          </div>
+        </article>
 
-      <!-- 04. Technical Arsenal -->
-      <SkillsSection />
+        <!-- Slide 05: Skills / Technical Arsenal -->
+        <article
+          class="slide-panel"
+          data-slide="4"
+          data-anchor="skills"
+          data-title="05 // TECHNICAL ARSENAL"
+          id="slide-skills"
+          aria-label="Slide 5 of 6: Technical Skills"
+        >
+          <div class="slide-inner">
+            <SkillsSection />
+          </div>
+        </article>
+
+        <!-- Slide 06: Contact / Direct Transmission -->
+        <article
+          class="slide-panel"
+          data-slide="5"
+          data-anchor="contact"
+          data-title="06 // DIRECT TRANSMISSION"
+          id="slide-contact"
+          aria-label="Slide 6 of 6: Direct Transmission"
+        >
+          <div class="slide-inner">
+            <Footer
+              brand="KIKZ AFABLE"
+              year="2026"
+              location="PHILIPPINES  UTC+8"
+              email="kikzafable@gmail.com"
+              github="https://github.com/Kikkoman-4"
+            />
+          </div>
+        </article>
+      </div>
+
+      <!-- Slide Deck HUD Navigation & Indicator Controls -->
+      <SlideControls total={6} />
     </main>
-
-    <!-- 05. Direct Contact & Footer Telemetry -->
-    <Footer
-      brand="KIKZ AFABLE"
-      year="2026"
-      location="PHILIPPINES  UTC+8"
-      email="kikzafable@gmail.com"
-      github="https://github.com/Kikkoman-4"
-    />
   </div>
 </BaseLayout>
 
+<script>
+  import { initSlideDeck } from "@scripts/slides";
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initSlideDeck);
+  } else {
+    initSlideDeck();
+  }
+</script>
+
 <style>
-  .page-wrapper {
+  :global(html.slide-deck-mode),
+  :global(body.slide-deck-mode) {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+  }
+
+  .deck-wrapper {
     position: relative;
-    width: 100%;
-    min-height: 100vh;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     z-index: 10;
   }
 
-  main {
+  /* Presentation Viewport */
+  .slides-viewport {
     flex: 1;
+    position: relative;
+    width: 100%;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .slides-stage {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  /* Slide Presentation Panels */
+  .slide-panel {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+    will-change: transform, opacity;
+  }
+
+  /* Scrollable inner viewport for responsive handling */
+  .slide-inner {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem 1.5rem calc(var(--hud-inset) + 4rem);
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
+  }
+
+  .slide-inner::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .slide-inner::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 4px;
+  }
+
+  .slide-inner::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  /* Component layout adjustments inside presentation slides */
+  .slide-panel :global(.hero-section),
+  .slide-panel :global(.about-section),
+  .slide-panel :global(.projects-section),
+  .slide-panel :global(.experience-section),
+  .slide-panel :global(.skills-section),
+  .slide-panel :global(.site-footer) {
+    width: 100%;
+    max-width: var(--max-width);
+    margin-top: auto;
+    margin-bottom: auto;
+    padding-top: 1.5rem;
+    padding-bottom: 2rem;
+  }
+
+  @media (max-width: 768px) {
+    .slide-inner {
+      padding: 0.5rem 1rem calc(var(--hud-inset) + 4.5rem);
+    }
+
+    .slide-panel :global(.hero-section),
+    .slide-panel :global(.about-section),
+    .slide-panel :global(.projects-section),
+    .slide-panel :global(.experience-section),
+    .slide-panel :global(.skills-section),
+    .slide-panel :global(.site-footer) {
+      padding-top: 1rem;
+      padding-bottom: 1.5rem;
+    }
   }
 </style>

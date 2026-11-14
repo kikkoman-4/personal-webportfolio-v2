@@ -16,6 +16,7 @@
   "homepage": "https://github.com/kikkoman-4/personal-webportfolio-v2#readme",
   "dependencies": {
     "astro": "^7.3.8",
+    "gsap": "^3.15.1",
     "typescript": "^7.0.2"
   },
   "type": "module",

@@ -79,3 +79,11 @@ export function playClick() {
   playBlip(1200, 0.03, "triangle");
 }
 
+export function playSlideSound(direction: 1 | -1 = 1) {
+  if (direction > 0) {
+    playBlip(820, 0.05, "sine");
+  } else {
+    playBlip(620, 0.05, "sine");
+  }
+}
+
