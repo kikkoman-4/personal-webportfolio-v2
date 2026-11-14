@@ -1,4 +1,4 @@
-// slides.ts - High-Performance Slide Deck Transition & Smooth Content Scroll Manager
+// slides.ts - High-Performance Solid Slide Deck Transition & Viewport Manager
 import { gsap } from "gsap";
 import { playSlideSound } from "@scripts/audio";
 
@@ -9,10 +9,10 @@ let slides: HTMLElement[] = [];
 let totalSlides = 0;
 
 // Gesture & Momentum Control Configuration
-const COOLDOWN_MS = 600; // Protection buffer against trackpad momentum bleed-through
-const WHEEL_THRESHOLD = 85; // Pixels of intentional wheel delta required at boundary
-const WHEEL_DECAY_MS = 220; // Silence window before boundary accumulator decays
-const TOUCH_THRESHOLD = 50; // Touch swipe distance required at boundary
+const COOLDOWN_MS = 500; // Protection buffer against trackpad momentum bleed-through
+const WHEEL_THRESHOLD = 75; // Pixels of intentional wheel delta required at boundary
+const WHEEL_DECAY_MS = 200; // Silence window before boundary accumulator decays
+const TOUCH_THRESHOLD = 45; // Touch swipe distance required at boundary
 
 let lastTransitionTime = 0;
 let wheelAccumulator = 0;
@@ -41,34 +41,36 @@ export function initSlideDeck() {
   document.documentElement.classList.add("slide-deck-mode");
   document.body.classList.add("slide-deck-mode");
 
-  // Initial layout: slide 0 is active and visible, others positioned below
+  // Initial layout: solid opaque slides, inactive slides hidden & inert
   slides.forEach((slide, i) => {
     if (i === 0) {
       gsap.set(slide, {
         yPercent: 0,
         opacity: 1,
-        autoAlpha: 1,
-        scale: 1,
         zIndex: 10,
         pointerEvents: "auto",
       });
       slide.classList.add("active");
+      slide.removeAttribute("inert");
+      slide.removeAttribute("aria-hidden");
+      slide.style.visibility = "visible";
     } else {
       gsap.set(slide, {
         yPercent: 100,
-        opacity: 0,
-        autoAlpha: 0,
-        scale: 0.96,
+        opacity: 1,
         zIndex: 1,
         pointerEvents: "none",
       });
       slide.classList.remove("active");
+      slide.setAttribute("inert", "");
+      slide.setAttribute("aria-hidden", "true");
+      slide.style.visibility = "hidden";
     }
   });
 
   updateHUD(0);
 
-  // 1. Native Wheel Listener for Precise Boundary & Content Scroll Detection
+  // 1. Native Wheel Listener for Boundary & Screen-Fit Slide Transitions
   window.addEventListener("wheel", onWheel, { passive: false });
 
   // 2. Touch Navigation Listeners
@@ -127,12 +129,12 @@ export function initSlideDeck() {
 }
 
 /**
- * High-precision wheel listener separating internal content scroll from segment transitions.
+ * Wheel listener with intentional boundary threshold and zero-fade transitions.
  */
 function onWheel(e: WheelEvent) {
   const now = Date.now();
 
-  // If transition is animating, suppress wheel events to prevent conflicting scroll queues
+  // If transition is animating, suppress wheel events to prevent queue buildup
   if (isAnimating) {
     e.preventDefault();
     return;
@@ -158,14 +160,14 @@ function onWheel(e: WheelEvent) {
   const inner = currentSlide.querySelector(".slide-inner") as HTMLElement | null;
   const isScrollable = inner && inner.scrollHeight > inner.clientHeight + 10;
 
-  // Case A: Slide has NO internal scrollable overflow (e.g. Hero on desktop)
+  // Case A: Slide has NO internal scrollable overflow (standard force-fit screen)
   if (!isScrollable || !inner) {
     e.preventDefault();
     accumulateWheel(deltaY > 0 ? "next" : "prev", Math.abs(deltaY));
     return;
   }
 
-  // Case B: Slide HAS internal scrollable overflow
+  // Case B: Slide has internal scrollable overflow (e.g. ultra-short screen fallback)
   const maxScroll = inner.scrollHeight - inner.clientHeight;
   const scrollTop = inner.scrollTop;
   const atTop = scrollTop <= 3;
@@ -174,22 +176,18 @@ function onWheel(e: WheelEvent) {
   if (deltaY > 0) {
     // Scrolling DOWN
     if (!atBottom) {
-      // Content is scrolling down inside the slide -> let browser scroll naturally
       resetWheelAccumulator();
       return;
     } else {
-      // At bottom boundary -> accumulate intentional overscroll for next slide
       e.preventDefault();
       accumulateWheel("next", deltaY);
     }
   } else if (deltaY < 0) {
     // Scrolling UP
     if (!atTop) {
-      // Content is scrolling up inside the slide -> let browser scroll naturally
       resetWheelAccumulator();
       return;
     } else {
-      // At top boundary -> accumulate intentional overscroll for previous slide
       e.preventDefault();
       accumulateWheel("prev", Math.abs(deltaY));
     }
@@ -286,20 +284,18 @@ function onTouchMove(e: TouchEvent) {
     return;
   }
 
-  // Slide HAS overflow
+  // Slide HAS overflow (ultra-short viewport)
   const maxScroll = inner.scrollHeight - inner.clientHeight;
   const scrollTop = inner.scrollTop;
   const atTop = scrollTop <= 3;
   const atBottom = scrollTop >= maxScroll - 4;
 
   if (diffY > TOUCH_THRESHOLD && atBottom) {
-    // Swiped up while already at the bottom of content
     isTouchActive = false;
     if (currentIndex < totalSlides - 1) {
       goToSlide(currentIndex + 1);
     }
   } else if (diffY < -TOUCH_THRESHOLD && atTop) {
-    // Swiped down while already at the top of content
     isTouchActive = false;
     if (currentIndex > 0) {
       goToSlide(currentIndex - 1);
@@ -312,7 +308,7 @@ function onTouchEnd() {
 }
 
 /**
- * Keyboard navigation with content scroll awareness.
+ * Keyboard navigation for slide deck.
  */
 function onKeyDown(e: KeyboardEvent) {
   const active = document.activeElement;
@@ -335,7 +331,6 @@ function onKeyDown(e: KeyboardEvent) {
     if (hasOverflow && inner) {
       const atBottom = inner.scrollTop >= maxScroll - 6;
       if (!atBottom) {
-        // Smoothly scroll content inside the slide
         const scrollAmount = e.key === "ArrowDown" ? 180 : inner.clientHeight * 0.75;
         inner.scrollBy({ top: scrollAmount, behavior: "smooth" });
         return;
@@ -349,7 +344,6 @@ function onKeyDown(e: KeyboardEvent) {
     if (hasOverflow && inner) {
       const atTop = inner.scrollTop <= 6;
       if (!atTop) {
-        // Smoothly scroll content inside the slide
         const scrollAmount = e.key === "ArrowUp" ? -180 : -inner.clientHeight * 0.75;
         inner.scrollBy({ top: scrollAmount, behavior: "smooth" });
         return;
@@ -368,7 +362,7 @@ function onKeyDown(e: KeyboardEvent) {
 }
 
 /**
- * Transitions to target slide with high-performance GSAP presentation animation.
+ * Transitions to target slide with solid, crisp, zero-fade push presentation animation.
  */
 export function goToSlide(targetIndex: number, immediate = false) {
   if (targetIndex === currentIndex && !immediate) return;
@@ -394,26 +388,36 @@ export function goToSlide(targetIndex: number, immediate = false) {
     targetInner.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
   }
 
+  // Prepare next slide: fully solid (opacity: 1), visible, interactive
+  nextSlide.removeAttribute("inert");
+  nextSlide.removeAttribute("aria-hidden");
+  nextSlide.style.visibility = "visible";
+  nextSlide.style.pointerEvents = "auto";
+  nextSlide.style.opacity = "1";
+  currentSlide.style.opacity = "1";
+
   if (immediate) {
     slides.forEach((s, idx) => {
       s.classList.toggle("active", idx === targetIndex);
       if (idx === targetIndex) {
+        s.removeAttribute("inert");
+        s.removeAttribute("aria-hidden");
+        s.style.visibility = "visible";
+        s.style.pointerEvents = "auto";
         gsap.set(s, {
           yPercent: 0,
           opacity: 1,
-          autoAlpha: 1,
-          scale: 1,
           zIndex: 10,
-          pointerEvents: "auto",
         });
       } else {
+        s.setAttribute("inert", "");
+        s.setAttribute("aria-hidden", "true");
+        s.style.visibility = "hidden";
+        s.style.pointerEvents = "none";
         gsap.set(s, {
-          yPercent: idx < targetIndex ? -35 : 100,
-          opacity: 0,
-          autoAlpha: 0,
-          scale: 0.96,
+          yPercent: idx < targetIndex ? -100 : 100,
+          opacity: 1,
           zIndex: 1,
-          pointerEvents: "none",
         });
       }
     });
@@ -421,27 +425,40 @@ export function goToSlide(targetIndex: number, immediate = false) {
     return;
   }
 
-  // Smooth slide transition timeline
+  // Solid Crisp Slide Transition - ZERO FADING (100% Opacity)
+  gsap.set(nextSlide, {
+    yPercent: isNext ? 100 : -100,
+    zIndex: 20,
+    opacity: 1,
+  });
+  gsap.set(currentSlide, {
+    zIndex: 10,
+    opacity: 1,
+  });
+
   const tl = gsap.timeline({
-    defaults: { ease: "power2.out" },
+    defaults: { ease: "power2.inOut", duration: 0.52 },
     onComplete: () => {
       currentSlide.classList.remove("active");
       nextSlide.classList.add("active");
 
+      // Hide and disable off-screen current slide
+      currentSlide.setAttribute("inert", "");
+      currentSlide.setAttribute("aria-hidden", "true");
+      currentSlide.style.visibility = "hidden";
+      currentSlide.style.pointerEvents = "none";
       gsap.set(currentSlide, {
-        autoAlpha: 0,
         zIndex: 1,
-        pointerEvents: "none",
-        yPercent: isNext ? -35 : 100,
-        opacity: 0,
+        yPercent: isNext ? -100 : 100,
+        opacity: 1,
       });
 
+      // Confirm next slide position
       gsap.set(nextSlide, {
         zIndex: 10,
-        pointerEvents: "auto",
         yPercent: 0,
         opacity: 1,
-        scale: 1,
+        pointerEvents: "auto",
       });
 
       isAnimating = false;
@@ -449,66 +466,26 @@ export function goToSlide(targetIndex: number, immediate = false) {
     },
   });
 
-  // Activate incoming slide
-  gsap.set(nextSlide, {
-    autoAlpha: 1,
-    zIndex: 20,
-    pointerEvents: "auto",
-  });
-
-  // 1. Current Slide Moves Out: smooth slide with subtle depth scale
+  // Solid push: Outgoing slide pushes off-screen, incoming slide slides into place
   tl.to(
     currentSlide,
     {
-      yPercent: isNext ? -35 : 100,
-      opacity: 0,
-      scale: isNext ? 0.95 : 0.98,
-      duration: 0.65,
+      yPercent: isNext ? -100 : 100,
+      duration: 0.52,
       ease: "power2.inOut",
     },
     0
   );
 
-  // 2. Next Slide Moves In: rises/drops into place smoothly
-  tl.fromTo(
+  tl.to(
     nextSlide,
     {
-      yPercent: isNext ? 100 : -35,
-      opacity: 0,
-      scale: isNext ? 0.98 : 0.95,
-    },
-    {
       yPercent: 0,
-      opacity: 1,
-      scale: 1,
-      duration: 0.65,
-      ease: "power2.out",
+      duration: 0.52,
+      ease: "power2.inOut",
     },
     0
   );
-
-  // 3. Staggered Content Reveal
-  const revealTargets = nextSlide.querySelectorAll(
-    ".hero-badge, .hero-headline, .hero-bio, .hero-actions, .section-header, .bento-card, .project-card, .timeline-item, .category-card, .certs-strip, .contact-box"
-  );
-  if (revealTargets.length > 0) {
-    tl.fromTo(
-      revealTargets,
-      {
-        y: isNext ? 22 : -22,
-        opacity: 0,
-      },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 0.45,
-        stagger: 0.035,
-        ease: "power2.out",
-        clearProps: "transform,opacity",
-      },
-      0.15
-    );
-  }
 }
 
 /**
@@ -570,7 +547,11 @@ function updateHUD(targetIndex: number) {
   if (anchor) {
     document.querySelectorAll<HTMLAnchorElement>(".nav-links .nav-item").forEach((item) => {
       const href = item.getAttribute("href")?.replace("#", "");
-      item.classList.toggle("active", href === anchor);
+      // Support matching section groups
+      const isMatch = href === anchor ||
+        (href === "projects" && (anchor === "projects" || anchor === "works-engines")) ||
+        (href === "experience" && (anchor === "experience" || anchor === "leadership"));
+      item.classList.toggle("active", isMatch);
     });
 
     if (history.replaceState) {

@@ -4,15 +4,18 @@ interface Props {
   total?: number;
 }
 
-const { total = 6 } = Astro.props;
+const { total = 9 } = Astro.props;
 
 const slideMeta = [
   { num: "01", label: "HOME", tag: "CORE" },
-  { num: "02", label: "ABOUT", tag: "DOSSIER" },
-  { num: "03", label: "WORKS", tag: "PORTFOLIO" },
-  { num: "04", label: "EXPERIENCE", tag: "TIMELINE" },
-  { num: "05", label: "SKILLS", tag: "ARSENAL" },
-  { num: "06", label: "CONTACT", tag: "TRANSMIT" },
+  { num: "02", label: "DOSSIER", tag: "BIO" },
+  { num: "03", label: "CONSOLE", tag: "CLI" },
+  { num: "04", label: "PLATFORMS", tag: "WEB" },
+  { num: "05", label: "ENGINES", tag: "CANVAS" },
+  { num: "06", label: "TIMELINE", tag: "CAREER" },
+  { num: "07", label: "LEADERSHIP", tag: "HONORS" },
+  { num: "08", label: "ARSENAL", tag: "STACK" },
+  { num: "09", label: "TRANSMIT", tag: "CONTACT" },
 ];
 ---
 

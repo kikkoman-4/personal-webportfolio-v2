@@ -1,7 +1,5 @@
 ---
-// AboutSection.astro - Developer Dossier & Interactive Terminal CLI
-import InteractiveTerminal from "@components/InteractiveTerminal.astro";
-
+// AboutSection.astro - Operative System Dossier & Live Telemetry
 const verifiedMetrics = [
   { value: "+40%", label: "INBOUND CLIENT LEADS", sub: "HildrStudios Main Storefront" },
   { value: "60+ FPS", label: "ZERO-DEPENDENCY ENGINE", sub: "Olympus Dash Arcade Jam" },
@@ -23,7 +21,7 @@ const credentials = [
     <div class="section-header">
       <div class="header-left">
         <span class="section-tag mono-hud">
-          <span class="hud-slash">//</span> 01. SYSTEM DOSSIER &amp; BIO
+          <span class="hud-slash">//</span> 02. SYSTEM DOSSIER &amp; BIO
         </span>
         <h2 class="section-title">Engineering background &amp; philosophy.</h2>
       </div>
@@ -34,7 +32,7 @@ const credentials = [
       </div>
     </div>
 
-    <!-- Bento Grid Structure for About Me -->
+    <!-- Bento Grid Structure for System Dossier -->
     <div class="about-bento">
       <!-- Row 1: Narrative Philosophy + Live Station Telemetry -->
       <div class="bento-row two-cols">
@@ -50,11 +48,7 @@ const credentials = [
           </h3>
 
           <p class="narrative-p">
-            Computer Science graduate based in BGC, Taguig, specializing in full-stack development, AI workflows, and high-performance interactive architectures.
-          </p>
-
-          <p class="narrative-p">
-            Whether engineering client storefronts at <strong>HildrStudios</strong> that increased monthly inbound inquiries by 40%, or developing Dockerized Python automation pipelines processing 200+ weekly civic requests with 0% downtime, I build systems focused on speed, reliability, and measurable impact.
+            Computer Science graduate based in BGC, Taguig, specializing in full-stack development, AI workflows, and high-performance interactive architectures. Focused on speed, reliability, and measurable client impact.
           </p>
 
           <!-- Verified Credentials Grid -->
@@ -103,31 +97,23 @@ const credentials = [
         </div>
       </div>
 
-      <!-- Row 2: Interactive Terminal CLI + Verified Metrics Stack -->
-      <div class="bento-row cli-metrics-row">
-        <!-- Card 3: Interactive Developer CLI -->
-        <div class="bento-card card-cli-wrap">
-          <InteractiveTerminal />
+      <!-- Row 2: Verified Performance Benchmarks Full Width -->
+      <div class="bento-card card-benchmarks glass-panel">
+        <div class="card-bar mono-hud">
+          <span>VERIFIED_BENCHMARKS</span>
+          <span class="text-hud">// LOGGED IMPACT</span>
         </div>
 
-        <!-- Card 4: Verified Performance Benchmarks -->
-        <div class="bento-card card-benchmarks glass-panel">
-          <div class="card-bar mono-hud">
-            <span>VERIFIED_BENCHMARKS</span>
-            <span class="text-hud">// LOGGED</span>
-          </div>
-
-          <div class="benchmarks-stack">
-            {
-              verifiedMetrics.map((m) => (
-                <div class="benchmark-item">
-                  <div class="bench-val">{m.value}</div>
-                  <div class="bench-label mono-hud">{m.label}</div>
-                  <div class="bench-sub">{m.sub}</div>
-                </div>
-              ))
-            }
-          </div>
+        <div class="benchmarks-stack">
+          {
+            verifiedMetrics.map((m) => (
+              <div class="benchmark-item">
+                <div class="bench-val">{m.value}</div>
+                <div class="bench-label mono-hud">{m.label}</div>
+                <div class="bench-sub">{m.sub}</div>
+              </div>
+            ))
+          }
         </div>
       </div>
     </div>
@@ -139,31 +125,37 @@ const credentials = [
     width: 100%;
     max-width: var(--max-width);
     margin: 0 auto;
-    padding: 4.5rem 1.5rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(0.5rem, 1.5vh, 1.5rem) clamp(0.75rem, 2vw, 1.5rem);
     position: relative;
     z-index: 10;
   }
 
   .section-container {
+    width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 2.5rem;
+    gap: clamp(0.6rem, 1.5vh, 1.25rem);
   }
 
   .section-header {
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
-    padding-bottom: 1.25rem;
+    padding-bottom: clamp(0.4rem, 1vh, 0.75rem);
     border-bottom: 1px solid var(--color-border);
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: 0.5rem;
   }
 
   .section-tag {
     color: var(--color-text-muted);
     display: block;
-    margin-bottom: 0.5rem;
+    font-size: clamp(0.65rem, 1vw, 0.72rem);
+    margin-bottom: 0.25rem;
   }
 
   .hud-slash {
@@ -171,7 +163,7 @@ const credentials = [
   }
 
   .section-title {
-    font-size: clamp(1.8rem, 3.2vw, 2.4rem);
+    font-size: clamp(1.25rem, 2.8vw, 2.1rem);
     font-weight: 700;
     color: #ffffff;
     letter-spacing: -0.02em;
@@ -181,6 +173,7 @@ const credentials = [
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    font-size: 0.68rem;
     color: var(--color-text-sub);
   }
 
@@ -188,24 +181,20 @@ const credentials = [
   .about-bento {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: clamp(0.6rem, 1.5vh, 1.15rem);
   }
 
   .bento-row {
     display: grid;
-    gap: 1.5rem;
+    gap: clamp(0.6rem, 1.5vh, 1.15rem);
   }
 
   .bento-row.two-cols {
     grid-template-columns: 1.25fr 1fr;
   }
 
-  .bento-row.cli-metrics-row {
-    grid-template-columns: 1.35fr 1fr;
-  }
-
   .bento-card {
-    padding: 1.75rem;
+    padding: clamp(0.75rem, 1.5vh, 1.35rem);
     background: rgba(10, 12, 16, 0.75);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
@@ -216,21 +205,15 @@ const credentials = [
     border-color: var(--color-border-hover);
   }
 
-  .card-cli-wrap {
-    padding: 0;
-    background: transparent;
-    border: none;
-  }
-
   .card-bar {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 0.72rem;
+    font-size: 0.68rem;
     color: var(--color-text-muted);
-    padding-bottom: 0.85rem;
+    padding-bottom: clamp(0.35rem, 0.8vh, 0.65rem);
     border-bottom: 1px solid var(--color-border-subtle);
-    margin-bottom: 1.25rem;
+    margin-bottom: clamp(0.5rem, 1vh, 0.85rem);
   }
 
   .id-badge {
@@ -243,153 +226,158 @@ const credentials = [
 
   /* Narrative */
   .narrative-heading {
-    font-size: 1.35rem;
+    font-size: clamp(0.95rem, 1.8vw, 1.25rem);
     font-weight: 700;
     color: #ffffff;
-    line-height: 1.35;
-    margin-bottom: 1rem;
-    letter-spacing: -0.015em;
+    line-height: 1.3;
+    margin-bottom: clamp(0.35rem, 0.8vh, 0.65rem);
   }
 
   .narrative-p {
-    font-size: 0.95rem;
-    color: var(--color-text-muted);
-    line-height: 1.65;
-    margin-bottom: 0.85rem;
-  }
-
-  .narrative-p strong {
-    color: #ffffff;
-    font-weight: 600;
+    font-size: clamp(0.78rem, 1.2vw, 0.88rem);
+    line-height: 1.55;
+    color: var(--color-text-sub);
+    margin-bottom: clamp(0.45rem, 1vh, 0.85rem);
   }
 
   /* Credentials */
   .creds-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.45rem;
-    padding: 0.85rem 1rem;
-    margin-top: 1rem;
-    background: rgba(0, 0, 0, 0.35);
-    border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-sm);
-    font-size: 0.72rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(0.35rem, 0.8vh, 0.65rem);
+    margin-top: clamp(0.35rem, 0.8vh, 0.65rem);
+    padding-top: clamp(0.35rem, 0.8vh, 0.65rem);
+    border-top: 1px solid var(--color-border-subtle);
   }
 
   .cred-row {
-    display: grid;
-    grid-template-columns: 110px 1fr;
-    gap: 0.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    font-size: 0.68rem;
   }
 
   .cred-k {
     color: var(--color-text-hud);
+    font-size: 0.62rem;
   }
 
   .cred-v {
-    color: var(--color-text-sub);
+    color: #ffffff;
+    font-weight: 500;
   }
 
-  /* Telemetry */
+  /* Telemetry Clock */
+  .card-telemetry {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
   .time-widget {
-    margin-bottom: 1.5rem;
+    margin: clamp(0.35rem, 0.8vh, 0.75rem) 0;
+    padding: clamp(0.5rem, 1vh, 0.85rem);
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-sm);
+    text-align: center;
   }
 
   .time-display {
     font-family: var(--font-mono);
-    font-size: 2.7rem;
-    font-weight: 800;
+    font-size: clamp(1.4rem, 3.2vw, 2.2rem);
+    font-weight: 700;
     color: #ffffff;
-    line-height: 1;
-    letter-spacing: -0.02em;
+    letter-spacing: 0.08em;
   }
 
   .tz-label {
-    color: var(--color-text-hud);
-    font-size: 0.72rem;
-    margin-top: 0.45rem;
+    font-size: 0.62rem;
+    color: var(--color-text-sub);
+    margin-top: 0.2rem;
   }
 
   .telemetry-rows {
     display: flex;
     flex-direction: column;
-    gap: 0.6rem;
-    font-size: 0.72rem;
+    gap: clamp(0.3rem, 0.7vh, 0.55rem);
+    font-size: 0.68rem;
   }
 
   .tele-row {
-    display: grid;
-    grid-template-columns: 85px 1fr;
-    gap: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.04);
+    padding-bottom: 0.25rem;
   }
 
   .tele-row .k {
-    color: var(--color-text-muted);
+    color: var(--color-text-hud);
   }
 
   .tele-row .v {
     color: var(--color-text-sub);
-  }
-
-  .text-green {
-    color: var(--color-accent-green);
-  }
-
-  .text-hud {
-    color: var(--color-text-hud);
+    font-weight: 500;
   }
 
   /* Benchmarks */
   .benchmarks-stack {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.25rem;
+    grid-template-columns: repeat(4, 1fr);
+    gap: clamp(0.5rem, 1vw, 1.25rem);
   }
 
   .benchmark-item {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
+    padding: clamp(0.4rem, 0.8vh, 0.75rem);
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-sm);
   }
 
   .bench-val {
     font-family: var(--font-mono);
-    font-size: 1.9rem;
-    font-weight: 700;
+    font-size: clamp(1.15rem, 2.2vw, 1.7rem);
+    font-weight: 800;
     color: #ffffff;
-    line-height: 1;
+    line-height: 1.1;
   }
 
   .bench-label {
-    font-size: 0.68rem;
+    font-size: 0.62rem;
     color: var(--color-accent-green);
-    letter-spacing: 0.08em;
+    margin: 0.2rem 0 0.1rem;
+    letter-spacing: 0.04em;
   }
 
   .bench-sub {
-    font-size: 0.74rem;
+    font-size: 0.65rem;
     color: var(--color-text-muted);
-    line-height: 1.4;
+    line-height: 1.3;
   }
 
-  @media (max-width: 980px) {
-    .bento-row.two-cols,
-    .bento-row.cli-metrics-row {
+  @media (max-width: 900px) {
+    .bento-row.two-cols {
       grid-template-columns: 1fr;
     }
-  }
 
-  @media (max-width: 640px) {
-    .bento-card {
-      padding: 1.25rem;
-    }
     .benchmarks-stack {
-      grid-template-columns: 1fr;
-      gap: 1rem;
+      grid-template-columns: repeat(2, 1fr);
     }
-    .cred-row {
+  }
+
+  @media (max-width: 540px) {
+    .creds-list {
       grid-template-columns: 1fr;
-      gap: 0.15rem;
+    }
+
+    .card-telemetry {
+      display: none; /* Hide secondary telemetry on ultra-compact mobile to guarantee 100% force fit */
+    }
+
+    .benchmarks-stack {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.4rem;
     }
   }
 </style>

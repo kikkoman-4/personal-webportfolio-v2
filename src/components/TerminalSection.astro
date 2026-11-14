@@ -1,0 +1,97 @@
+---
+// TerminalSection.astro - Dedicated full-screen interactive developer terminal console
+import InteractiveTerminal from "@components/InteractiveTerminal.astro";
+---
+
+<section id="terminal" class="terminal-section">
+  <div class="section-container">
+    <div class="section-header">
+      <div class="header-left">
+        <span class="section-tag mono-hud">
+          <span class="hud-slash">//</span> 03. COMMAND INTERFACE
+        </span>
+        <h2 class="section-title">Direct operative terminal console.</h2>
+      </div>
+      <div class="header-right">
+        <span class="mono-hud status-online">
+          <span class="status-dot"></span> TTY // ACTIVE SESSION
+        </span>
+      </div>
+    </div>
+
+    <div class="terminal-slide-wrap">
+      <InteractiveTerminal />
+    </div>
+  </div>
+</section>
+
+<style>
+  .terminal-section {
+    width: 100%;
+    max-width: var(--max-width);
+    margin: 0 auto;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(0.5rem, 1.5vh, 1.5rem) clamp(0.75rem, 2vw, 1.5rem);
+    position: relative;
+    z-index: 10;
+  }
+
+  .section-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(0.6rem, 1.5vh, 1.25rem);
+  }
+
+  .section-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding-bottom: clamp(0.4rem, 1vh, 0.75rem);
+    border-bottom: 1px solid var(--color-border);
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .section-tag {
+    font-size: clamp(0.65rem, 1vw, 0.72rem);
+    color: var(--color-text-sub);
+    margin-bottom: 0.25rem;
+  }
+
+  .hud-slash {
+    color: var(--color-accent-red);
+  }
+
+  .section-title {
+    font-size: clamp(1.25rem, 2.8vw, 2.1rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #ffffff;
+  }
+
+  .status-online {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.68rem;
+    color: var(--color-text-sub);
+  }
+
+  .terminal-slide-wrap {
+    width: 100%;
+    max-width: 980px;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 640px) {
+    .section-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.35rem;
+    }
+  }
+</style>

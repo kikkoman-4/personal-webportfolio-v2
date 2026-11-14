@@ -74,16 +74,19 @@ The application delivers sub-second page loads, zero runtime overhead from heavy
 
 ## 🗂️ Presentation Deck Breakdown
 
-The deck is organized into six targeted presentation slides:
+The deck is organized into nine targeted presentation slides, each engineered to force-fit the viewport with zero vertical scroll:
 
 | Slide | Anchor | Title | Component | Highlights |
 | :---: | :--- | :--- | :--- | :--- |
 | **01** | `#home` | `WIREFRAME ENGINE CORE` | `Hero.astro` | Interactive 3D Canvas engine, tech badges, call-to-actions |
-| **02** | `#about` | `SYSTEM DOSSIER & BIO` | `AboutSection.astro` | Interactive terminal CLI, verified metrics, live station telemetry |
-| **03** | `#projects` | `SELECTED WORKS` | `ProjectsSection.astro` | Featured client storefronts, game engines, and civic portals |
-| **04** | `#experience` | `EXPERIENCE & LEADERSHIP` | `ExperienceSection.astro` | Professional timeline, engineering impact, leadership roles |
-| **05** | `#skills` | `TECHNICAL ARSENAL` | `SkillsSection.astro` | Categorized technical skills & verified Google certifications |
-| **06** | `#contact` | `DIRECT TRANSMISSION` | `Footer.astro` | One-click clipboard email copy, social links, footer telemetry |
+| **02** | `#about` | `SYSTEM DOSSIER & BIO` | `AboutSection.astro` | Operative bio narrative, station telemetry, 4 verified benchmarks |
+| **03** | `#terminal` | `COMMAND INTERFACE` | `TerminalSection.astro` | Full-width interactive ZSH terminal console with quick-run pills |
+| **04** | `#projects` | `WORKS: WEB & CLOUD` | `ProjectsSection.astro` | Wine Century, Civic LGU Portal, Inventi Property Management |
+| **05** | `#works-engines` | `WORKS: ENGINES & REALTIME` | `ProjectsSection.astro` | Olympus Dash 60 FPS Canvas, YGG Matchmaking WebSockets |
+| **06** | `#experience` | `CAREER TIMELINE` | `ExperienceSection.astro` | HildrStudios, Pawzled Digital, Barangay Cotta LGU engineering logs |
+| **07** | `#leadership` | `LEADERSHIP & ACADEMICS` | `ExperienceSection.astro` | Shiba Re-Ignite presidency, STI College honors, hackathons |
+| **08** | `#skills` | `TECHNICAL ARSENAL` | `SkillsSection.astro` | Categorized technical skills & verified Google certifications |
+| **09** | `#contact` | `DIRECT TRANSMISSION` | `Footer.astro` | One-click clipboard email copy, social links, footer telemetry |
 
 ---
 
@@ -134,15 +137,16 @@ personal-webportfolio-v2/
 │   │   └── images/             # Media and graphic assets
 │   ├── components/             # Astro UI Components
 │   │   ├── AboutSection.astro        # Slide 02: Bento dossier & station stats
-│   │   ├── ExperienceSection.astro   # Slide 04: Cybernetic career timeline
-│   │   ├── Footer.astro              # Slide 06: Contact transmission & metadata
+│   │   ├── ExperienceSection.astro   # Slides 06 & 07: Career timeline & leadership
+│   │   ├── Footer.astro              # Slide 09: Contact transmission & metadata
 │   │   ├── Hero.astro                # Slide 01: Core introduction & CTA
 │   │   ├── HudFrame.astro            # Viewport telemetry border & crosshairs
-│   │   ├── InteractiveTerminal.astro # Slide 02: Interactive CLI console
+│   │   ├── InteractiveTerminal.astro # Terminal CLI logic & commands
 │   │   ├── Navbar.astro              # Top brand bar, slide links & audio toggle
-│   │   ├── ProjectsSection.astro     # Slide 03: Selected works & metric cards
-│   │   ├── SkillsSection.astro       # Slide 05: Tech chips & certifications
+│   │   ├── ProjectsSection.astro     # Slides 04 & 05: Curated project cards
+│   │   ├── SkillsSection.astro       # Slide 08: Tech chips & certifications
 │   │   ├── SlideControls.astro       # Right rail pips & bottom deck dock
+│   │   ├── TerminalSection.astro     # Slide 03: Dedicated terminal slide stage
 │   │   └── WireframeEngine.astro     # 60 FPS HTML5 Canvas 3D engine
 │   ├── layouts/
 │   │   └── BaseLayout.astro    # HTML head, typography, SEO metadata

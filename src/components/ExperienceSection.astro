@@ -6,17 +6,32 @@ interface ExperienceItem {
   period: string;
   highlights: string[];
   badge?: string;
+  type: "engineering" | "leadership";
 }
 
-const experiences: ExperienceItem[] = [
+interface Props {
+  view?: "engineering" | "leadership" | "all";
+  tagNumber?: string;
+  sectionTitle?: string;
+}
+
+const {
+  view = "engineering",
+  tagNumber = "06",
+  sectionTitle = view === "leadership"
+    ? "Community leadership & academic distinctions."
+    : "Verified software engineering track record.",
+} = Astro.props;
+
+const allExperiences: ExperienceItem[] = [
   {
     role: "Full-Stack Developer",
     company: "HildrStudios",
     period: "Nov 2025 — Aug 2026",
     badge: "Web Engineering",
+    type: "engineering",
     highlights: [
-      "Engineered and deployed main digital storefront using React and Tailwind CSS, increasing monthly inbound client inquiries by 40%.",
-      "Collaborated in an Agile cross-functional team to refine user submission workflows and React interface performance.",
+      "Engineered main digital storefront using React and Tailwind CSS, increasing monthly inbound client leads by 40%.",
       "Automated CI/CD deployment pipelines using GitHub Actions, maintaining 99.9% uptime and zero-downtime releases.",
     ],
   },
@@ -25,9 +40,10 @@ const experiences: ExperienceItem[] = [
     company: "Pawzled Digital Studio",
     period: "Feb 2026 — Jun 2026",
     badge: "Interactive & Performance",
+    type: "engineering",
     highlights: [
       "Re-engineered legacy browser game into a cross-platform mobile app using C# and Unity, achieving stable 60 FPS performance.",
-      "Programmed modular physics interactions and boss encounter state machines, reducing gameplay bugs by optimizing memory management.",
+      "Programmed modular physics interactions and boss encounter state machines, reducing gameplay bugs by optimizing memory.",
     ],
   },
   {
@@ -35,32 +51,60 @@ const experiences: ExperienceItem[] = [
     company: "Barangay Cotta LGU",
     period: "Sept 2020 — Mar 2022",
     badge: "Civic Architecture",
+    type: "engineering",
     highlights: [
-      "Architected centralized civic service portal with role-based access control (RBAC), appointment scheduling, and automated document issuance.",
-      "Built Python automated document generation pipeline containerized with Docker, processing 200+ weekly requests with 0% downtime and reducing manual time by ~70%.",
+      "Architected centralized civic portal with role-based access control (RBAC), appointment scheduling, and automated document issuance.",
+      "Built Python automated document pipeline containerized with Docker, processing 200+ weekly requests with 0% downtime.",
     ],
   },
   {
     role: "President & Organization Lead",
-    company: "Shiba Re-Ignite Organization (STI College)",
+    company: "Shiba Re-Ignite Org (STI College)",
     period: "Oct 2024 — Present",
-    badge: "Leadership & Community",
+    badge: "Student Leadership",
+    type: "leadership",
     highlights: [
-      "Lead technical community initiatives, organize esports tournaments, and coordinate IT workshops and student cloud certifications.",
+      "Direct technical community initiatives, esports tournaments, and coordinate IT workshops and student cloud certifications.",
       "Previously served as Vice-President (2023–2024) and Secretary (2022–2023).",
     ],
   },
+  {
+    role: "BS in Computer Science",
+    company: "STI College Lucena",
+    period: "Aug 2022 — July 2026",
+    badge: "Academic Honors",
+    type: "leadership",
+    highlights: [
+      "Consistent Dean's Lister honors across all academic years (2022–2025).",
+      "Senior High School Track: Mobile App & Web Development With High Honors (2020–2022).",
+    ],
+  },
+  {
+    role: "Technical Lead & Credentials",
+    company: "Google Certified & Hackathons",
+    period: "2024 — 2026",
+    badge: "Verified Industry Certs",
+    type: "leadership",
+    highlights: [
+      "Verified Google Network Security, Google AI, and Agile & Scrum Framework specializations.",
+      "Led competitive hackathon teams to final bracket finishes in YGG Play Summit and civic tech builds.",
+    ],
+  },
 ];
+
+const experiences = view === "all"
+  ? allExperiences
+  : allExperiences.filter((e) => e.type === view);
 ---
 
-<section id="experience" class="experience-section">
+<section id={view === "leadership" ? "leadership" : "experience"} class="experience-section">
   <div class="section-container">
     <div class="section-header">
       <div class="header-left">
         <span class="section-tag mono-hud">
-          <span class="hud-slash">//</span> 03. EXPERIENCE &amp; LEADERSHIP
+          <span class="hud-slash">//</span> {tagNumber}. {view === "leadership" ? "LEADERSHIP & ACADEMICS" : "CAREER TIMELINE"}
         </span>
-        <h2 class="section-title">Verified track record.</h2>
+        <h2 class="section-title">{sectionTitle}</h2>
       </div>
       <div class="header-right">
         <span class="mono-hud status-avail">
@@ -69,34 +113,32 @@ const experiences: ExperienceItem[] = [
       </div>
     </div>
 
-    <!-- Timeline List -->
-    <div class="timeline-list">
+    <!-- Timeline Grid Cards (Force-Fit) -->
+    <div class={`timeline-grid count-${experiences.length}`}>
       {
         experiences.map((exp, idx) => (
-          <div class="timeline-item">
-            <div class="timeline-col-meta mono-hud">
-              <span class="exp-period">{exp.period}</span>
-              <span class="exp-badge">{exp.badge}</span>
-            </div>
-
-            <div class="timeline-col-content glass-panel">
-              <div class="content-header">
-                <div>
-                  <h3 class="exp-role">{exp.role}</h3>
-                  <div class="exp-company mono-hud">@ {exp.company}</div>
-                </div>
-                <span class="step-num mono-hud">LOG #{idx + 1}</span>
+          <div class="timeline-item glass-panel">
+            <div class="item-header">
+              <div class="item-meta mono-hud">
+                <span class="exp-period">{exp.period}</span>
+                {exp.badge && <span class="exp-badge">{exp.badge}</span>}
               </div>
-
-              <ul class="exp-bullets">
-                {exp.highlights.map((bullet) => (
-                  <li>
-                    <span class="bullet-arrow" aria-hidden="true">&gt;</span>
-                    <span>{bullet}</span>
-                  </li>
-                ))}
-              </ul>
+              <span class="step-num mono-hud">LOG #0{idx + 1}</span>
             </div>
+
+            <div class="item-body">
+              <h3 class="exp-role">{exp.role}</h3>
+              <div class="exp-company mono-hud">@ {exp.company}</div>
+            </div>
+
+            <ul class="exp-bullets">
+              {exp.highlights.map((bullet) => (
+                <li>
+                  <span class="bullet-arrow" aria-hidden="true">&gt;</span>
+                  <span>{bullet}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         ))
       }
@@ -109,31 +151,36 @@ const experiences: ExperienceItem[] = [
     width: 100%;
     max-width: var(--max-width);
     margin: 0 auto;
-    padding: 4.5rem 1.5rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(0.5rem, 1.5vh, 1.5rem) clamp(0.75rem, 2vw, 1.5rem);
     position: relative;
     z-index: 10;
   }
 
   .section-container {
+    width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 2.5rem;
+    gap: clamp(0.6rem, 1.5vh, 1.25rem);
   }
 
   .section-header {
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
-    padding-bottom: 1.25rem;
+    padding-bottom: clamp(0.4rem, 1vh, 0.75rem);
     border-bottom: 1px solid var(--color-border);
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: 0.5rem;
   }
 
   .section-tag {
-    color: var(--color-text-muted);
-    display: block;
-    margin-bottom: 0.5rem;
+    font-size: clamp(0.65rem, 1vw, 0.72rem);
+    color: var(--color-text-sub);
+    margin-bottom: 0.25rem;
   }
 
   .hud-slash {
@@ -141,7 +188,7 @@ const experiences: ExperienceItem[] = [
   }
 
   .section-title {
-    font-size: clamp(1.8rem, 3.2vw, 2.4rem);
+    font-size: clamp(1.2rem, 2.6vw, 2rem);
     font-weight: 700;
     color: #ffffff;
     letter-spacing: -0.02em;
@@ -150,116 +197,123 @@ const experiences: ExperienceItem[] = [
   .status-avail {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    color: var(--color-accent-green);
+    gap: 0.45rem;
+    font-size: 0.68rem;
+    color: var(--color-text-sub);
   }
 
-  /* Timeline */
-  .timeline-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+  /* Timeline Grid */
+  .timeline-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(0.6rem, 1.5vh, 1.25rem);
+    width: 100%;
   }
 
   .timeline-item {
-    display: grid;
-    grid-template-columns: 240px 1fr;
-    gap: 2rem;
-    align-items: flex-start;
-  }
-
-  .timeline-col-meta {
+    padding: clamp(0.75rem, 1.6vh, 1.4rem);
+    background: rgba(12, 14, 18, 0.75);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    padding-top: 0.75rem;
-  }
-
-  .exp-period {
-    color: #ffffff;
-    font-size: 0.78rem;
-    letter-spacing: 0.08em;
-  }
-
-  .exp-badge {
-    color: var(--color-text-hud);
-    font-size: 0.7rem;
-  }
-
-  .timeline-col-content {
-    padding: 1.75rem;
-    background: rgba(12, 14, 18, 0.7);
-    border: 1px solid var(--color-border);
+    justify-content: space-between;
     transition: all var(--transition-normal);
   }
 
-  .timeline-col-content:hover {
+  .timeline-item:hover {
     border-color: var(--color-border-hover);
+    transform: translateY(-2px);
     background: rgba(16, 18, 24, 0.85);
   }
 
-  .content-header {
+  .item-header {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
-    padding-bottom: 1rem;
+    padding-bottom: clamp(0.35rem, 0.8vh, 0.6rem);
     border-bottom: 1px solid var(--color-border-subtle);
-    margin-bottom: 1.15rem;
-    gap: 1rem;
+    margin-bottom: clamp(0.4rem, 1vh, 0.75rem);
   }
 
-  .exp-role {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #ffffff;
-    letter-spacing: -0.01em;
-    margin-bottom: 0.25rem;
+  .item-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.65rem;
   }
 
-  .exp-company {
+  .exp-period {
     color: var(--color-text-muted);
-    font-size: 0.8rem;
-    letter-spacing: 0.05em;
+  }
+
+  .exp-badge {
+    padding: 0.15rem 0.45rem;
+    border-radius: var(--radius-pill);
+    background: rgba(34, 197, 94, 0.08);
+    border: 1px solid rgba(34, 197, 94, 0.2);
+    color: var(--color-accent-green);
+    font-size: 0.6rem;
   }
 
   .step-num {
     color: var(--color-text-hud);
-    font-size: 0.72rem;
+    font-size: 0.65rem;
+  }
+
+  .item-body {
+    margin-bottom: clamp(0.4rem, 1vh, 0.75rem);
+  }
+
+  .exp-role {
+    font-size: clamp(0.95rem, 1.5vw, 1.2rem);
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.25;
+    margin-bottom: 0.2rem;
+  }
+
+  .exp-company {
+    font-size: 0.7rem;
+    color: var(--color-accent-green);
+    letter-spacing: 0.04em;
   }
 
   .exp-bullets {
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: clamp(0.35rem, 0.8vh, 0.6rem);
   }
 
   .exp-bullets li {
-    display: grid;
-    grid-template-columns: 14px 1fr;
-    gap: 0.5rem;
-    font-size: 0.92rem;
-    color: var(--color-text-muted);
-    line-height: 1.6;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.45rem;
+    font-size: clamp(0.74rem, 1.1vw, 0.82rem);
+    line-height: 1.5;
+    color: var(--color-text-sub);
   }
 
   .bullet-arrow {
-    font-family: var(--font-mono);
     color: var(--color-accent-green);
-    font-size: 0.85rem;
+    font-family: var(--font-mono);
+    line-height: 1.5;
+    flex-shrink: 0;
   }
 
-  @media (max-width: 840px) {
-    .timeline-item {
+  @media (max-width: 900px) {
+    .timeline-grid {
       grid-template-columns: 1fr;
-      gap: 0.75rem;
+      gap: 0.65rem;
     }
-    .timeline-col-meta {
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: center;
-      padding-top: 0;
+
+    .timeline-item {
+      padding: 0.75rem;
+    }
+
+    .exp-bullets li:nth-child(n+2) {
+      display: none; /* Show primary achievement bullet on mobile to force fit */
     }
   }
 </style>
-

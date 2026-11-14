@@ -8,48 +8,45 @@ interface Project {
   tags: string[];
   link?: string;
   metrics?: string;
+  group: "platforms" | "engines";
 }
 
-const projects: Project[] = [
+interface Props {
+  group?: "platforms" | "engines" | "all";
+  tagNumber?: string;
+  sectionTitle?: string;
+}
+
+const {
+  group = "platforms",
+  tagNumber = "04",
+  sectionTitle = group === "engines"
+    ? "60 FPS engines & multiplayer architectures."
+    : "Resilient web applications & cloud portals.",
+} = Astro.props;
+
+const allProjects: Project[] = [
   {
     title: "Wine Century Brothers Inc.",
     category: "Lead Web Developer",
     year: "2026",
     description:
-      "Engineered an end-to-end web application using React and Next.js tailored for luxury product exploration, fast catalog filtering, and high-converting inbound sales lead generation.",
+      "End-to-end web application in React and Next.js tailored for luxury product exploration, fast catalog filtering, and high-converting inbound lead generation.",
     tags: ["React", "Next.js", "Tailwind CSS", "TypeScript", "Vercel"],
-    metrics: "40% Boost in Lead Generation",
+    metrics: "40% Boost in Inbound Leads",
     link: "https://kikzafable.vercel.app",
-  },
-  {
-    title: "Olympus Dash Chaos Arena",
-    category: "Game & Creative Engineering",
-    year: "2026",
-    description:
-      "Architected and deployed a 2D survival arcade game within 24-hour flash jam constraints. Sustained 60+ FPS using zero-dependency HTML5 Canvas, procedural Web Audio synthesis, and responsive viewport scaling.",
-    tags: ["HTML5 Canvas", "Web Audio API", "TypeScript", "@remix-gg/sdk"],
-    metrics: "60+ FPS Zero-Dependency Canvas",
-    link: "https://github.com/Kikkoman-4",
+    group: "platforms",
   },
   {
     title: "Civic Service LGU Portal",
     category: "Full-Stack Web Developer",
     year: "2022",
     description:
-      "Centralized civic portal featuring role-based access control (RBAC), appointment scheduling, and automated Python document issuance pipeline containerized via Docker.",
+      "Centralized civic portal with role-based access control (RBAC), appointment booking, and automated Python document issuance pipeline containerized via Docker.",
     tags: ["Python", "Docker", "FastAPI", "PostgreSQL", "RBAC"],
     metrics: "200+ Weekly Requests • -70% Manual Time",
     link: "https://github.com/Kikkoman-4",
-  },
-  {
-    title: "YGG Play Summit Matchmaking",
-    category: "Hackathon Team Lead",
-    year: "2025",
-    description:
-      "Led a team to develop a competitive bracket-based typing combat game featuring real-time WebSockets matchmaking and dynamic combat progression systems.",
-    tags: ["WebSockets", "React", "Node.js", "Competitive Combat"],
-    metrics: "Multiplayer Real-time Matchmaking",
-    link: "https://github.com/Kikkoman-4",
+    group: "platforms",
   },
   {
     title: "Inventi Property Management",
@@ -60,27 +57,54 @@ const projects: Project[] = [
     tags: ["Next.js", "Supabase", "Analytics", "Automation"],
     metrics: "End-to-End Hotel Operations MVP",
     link: "https://github.com/Kikkoman-4",
+    group: "platforms",
+  },
+  {
+    title: "Olympus Dash Chaos Arena",
+    category: "Game & Creative Engineering",
+    year: "2026",
+    description:
+      "2D survival arcade game built within 24-hour jam constraints. Sustains 60+ FPS using zero-dependency HTML5 Canvas, procedural Web Audio synthesis, and responsive scaling.",
+    tags: ["HTML5 Canvas", "Web Audio API", "TypeScript", "Remix SDK"],
+    metrics: "60+ FPS Zero-Dependency Canvas",
+    link: "https://github.com/Kikkoman-4",
+    group: "engines",
+  },
+  {
+    title: "YGG Play Summit Matchmaking",
+    category: "Hackathon Team Lead",
+    year: "2025",
+    description:
+      "Competitive bracket typing combat game featuring real-time WebSockets matchmaking, dynamic combat progression, and low-latency client synchronization.",
+    tags: ["WebSockets", "React", "Node.js", "Competitive Combat"],
+    metrics: "Multiplayer Real-time Matchmaking",
+    link: "https://github.com/Kikkoman-4",
+    group: "engines",
   },
 ];
+
+const projects = group === "all"
+  ? allProjects
+  : allProjects.filter((p) => p.group === group);
 ---
 
-<section id="projects" class="projects-section">
+<section id={group === "engines" ? "works-engines" : "projects"} class="projects-section">
   <div class="section-container">
     <!-- Section Header -->
     <div class="section-header">
       <div class="header-left">
         <span class="section-tag mono-hud">
-          <span class="hud-slash">//</span> 02. SELECTED WORKS
+          <span class="hud-slash">//</span> {tagNumber}. SELECTED WORKS {group === "engines" ? "// ENGINES & REALTIME" : "// WEB & CLOUD PLATFORMS"}
         </span>
-        <h2 class="section-title">Engineered to perform.</h2>
+        <h2 class="section-title">{sectionTitle}</h2>
       </div>
       <div class="header-right">
-        <span class="mono-hud project-count">TOTAL: {projects.length} PROJECTS</span>
+        <span class="mono-hud project-count">DISPLAYING: 0{projects.length} PROJECTS</span>
       </div>
     </div>
 
     <!-- Projects Grid -->
-    <div class="projects-grid">
+    <div class={`projects-grid count-${projects.length}`}>
       {
         projects.map((proj, idx) => (
           <article class="project-card glass-panel">
@@ -134,31 +158,37 @@ const projects: Project[] = [
     width: 100%;
     max-width: var(--max-width);
     margin: 0 auto;
-    padding: 4.5rem 1.5rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(0.5rem, 1.5vh, 1.5rem) clamp(0.75rem, 2vw, 1.5rem);
     position: relative;
     z-index: 10;
   }
 
   .section-container {
+    width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 2.5rem;
+    gap: clamp(0.6rem, 1.5vh, 1.25rem);
   }
 
   .section-header {
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
-    padding-bottom: 1.25rem;
+    padding-bottom: clamp(0.4rem, 1vh, 0.75rem);
     border-bottom: 1px solid var(--color-border);
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: 0.5rem;
   }
 
   .section-tag {
     color: var(--color-text-muted);
     display: block;
-    margin-bottom: 0.5rem;
+    font-size: clamp(0.65rem, 1vw, 0.72rem);
+    margin-bottom: 0.25rem;
   }
 
   .hud-slash {
@@ -166,7 +196,7 @@ const projects: Project[] = [
   }
 
   .section-title {
-    font-size: clamp(1.8rem, 3.2vw, 2.4rem);
+    font-size: clamp(1.2rem, 2.6vw, 2rem);
     font-weight: 700;
     color: #ffffff;
     letter-spacing: -0.02em;
@@ -174,30 +204,38 @@ const projects: Project[] = [
 
   .project-count {
     color: var(--color-text-hud);
+    font-size: 0.68rem;
   }
 
   /* Projects Grid */
   .projects-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
-    gap: 1.5rem;
+    gap: clamp(0.6rem, 1.5vh, 1.25rem);
+    width: 100%;
+  }
+
+  .projects-grid.count-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .projects-grid.count-2 {
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .project-card {
-    padding: 1.75rem;
+    padding: clamp(0.75rem, 1.6vh, 1.4rem);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    min-height: 280px;
     background: rgba(12, 14, 18, 0.7);
     border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
     transition: all var(--transition-normal);
   }
 
   .project-card:hover {
     border-color: var(--color-border-hover);
-    transform: translateY(-3px);
-    box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.75);
+    transform: translateY(-2px);
     background: rgba(16, 18, 24, 0.85);
   }
 
@@ -205,102 +243,127 @@ const projects: Project[] = [
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 1.25rem;
+    margin-bottom: clamp(0.4rem, 1vh, 0.75rem);
   }
 
   .card-meta {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.5rem;
     color: var(--color-text-muted);
-    font-size: 0.72rem;
+    font-size: 0.68rem;
   }
 
   .proj-num {
+    color: var(--color-accent-green);
+    font-weight: 700;
+  }
+
+  .proj-year {
     color: var(--color-text-hud);
   }
 
-  .proj-category {
-    color: var(--color-text-sub);
-  }
-
   .project-ext-link {
-    font-family: var(--font-mono);
-    font-size: 1.1rem;
-    color: var(--color-text-muted);
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    border: 1px solid var(--color-border-subtle);
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--color-border-subtle);
+    color: var(--color-text-muted);
+    font-size: 0.8rem;
     transition: all var(--transition-fast);
   }
 
-  .project-card:hover .project-ext-link {
-    color: #000000;
+  .project-ext-link:hover {
     background: #ffffff;
+    color: #000000;
     border-color: #ffffff;
-    transform: rotate(45deg);
+    transform: scale(1.1);
+  }
+
+  .card-body {
+    margin-bottom: clamp(0.4rem, 1vh, 0.85rem);
   }
 
   .proj-title {
-    font-size: 1.35rem;
-    font-weight: 600;
+    font-size: clamp(0.95rem, 1.6vw, 1.25rem);
+    font-weight: 700;
     color: #ffffff;
-    margin-bottom: 0.75rem;
-    letter-spacing: -0.01em;
+    margin-bottom: clamp(0.25rem, 0.6vh, 0.45rem);
+    line-height: 1.25;
   }
 
   .proj-desc {
-    font-size: 0.92rem;
-    line-height: 1.6;
+    font-size: clamp(0.74rem, 1.1vw, 0.85rem);
+    line-height: 1.5;
     color: var(--color-text-muted);
-    margin-bottom: 1.5rem;
   }
 
   .card-bottom {
     display: flex;
     flex-direction: column;
-    gap: 0.9rem;
-    padding-top: 1.2rem;
-    border-top: 1px solid var(--color-border-subtle);
+    gap: clamp(0.35rem, 0.8vh, 0.65rem);
   }
 
   .metric-pill {
     display: inline-flex;
     align-items: center;
-    gap: 0.45rem;
-    font-size: 0.73rem;
+    gap: 0.4rem;
+    font-size: 0.65rem;
     color: var(--color-accent-green);
+    background: rgba(34, 197, 94, 0.08);
+    border: 1px solid rgba(34, 197, 94, 0.2);
+    padding: 0.2rem 0.55rem;
+    border-radius: var(--radius-pill);
+    width: fit-content;
   }
 
   .metric-dot {
-    font-size: 1rem;
-    line-height: 0;
+    font-size: 0.85rem;
+    line-height: 1;
   }
 
   .proj-tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.4rem;
+    gap: 0.3rem;
   }
 
   .tag-chip {
-    padding: 0.2rem 0.65rem;
-    border-radius: var(--radius-pill);
+    font-size: 0.62rem;
+    font-family: var(--font-mono);
+    color: var(--color-text-sub);
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid var(--color-border-subtle);
-    font-size: 0.72rem;
-    color: var(--color-text-sub);
-    font-family: var(--font-mono);
+    padding: 0.15rem 0.45rem;
+    border-radius: var(--radius-xs);
   }
 
-  @media (max-width: 640px) {
-    .projects-grid {
+  @media (max-width: 900px) {
+    .projects-grid.count-3,
+    .projects-grid.count-2 {
       grid-template-columns: 1fr;
+      gap: 0.65rem;
+    }
+
+    .proj-desc {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .project-card {
+      padding: 0.75rem;
+    }
+  }
+
+  @media (max-height: 680px) {
+    .proj-tags {
+      display: none;
     }
   }
 </style>
-
