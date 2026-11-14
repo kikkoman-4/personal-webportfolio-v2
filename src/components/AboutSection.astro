@@ -1,29 +1,54 @@
 ---
-// AboutSection.astro - Operative System Dossier & Live Telemetry
-const verifiedMetrics = [
-  { value: "+40%", label: "INBOUND CLIENT LEADS", sub: "HildrStudios Main Storefront" },
-  { value: "60+ FPS", label: "ZERO-DEPENDENCY ENGINE", sub: "Olympus Dash Arcade Jam" },
-  { value: "200+", label: "WEEKLY CIVIC REQUESTS", sub: "LGU Central Portal" },
-  { value: "0%", label: "SYSTEM DOWNTIME", sub: "Dockerized Python Architecture" },
+// AboutSection.astro - Operative System Dossier: The Fusion of Identity, Academics, Telemetry & Milestones
+
+const milestones = [
+  {
+    val: "12+",
+    label: "PROJECTS SHIPPED",
+    sub: "Full-Stack Web, Engines & Games",
+    tag: "PORTFOLIO",
+  },
+  {
+    val: "8+",
+    label: "COMMERCIAL CLIENTS",
+    sub: "Direct Contracts & 100% SLA",
+    tag: "CLIENTS",
+  },
+  {
+    val: "60+ FPS",
+    label: "ZERO-DEP ENGINES",
+    sub: "HTML5 Canvas 2D & Audio Core",
+    tag: "PERF",
+  },
+  {
+    val: "3+ YRS",
+    label: "PRACTICAL EXPERIENCE",
+    sub: "Modern Web & Systems Engineering",
+    tag: "EXP",
+  },
 ];
 
-const credentials = [
-  { label: "DEGREE", val: "BS in Computer Science (Dean's Lister)" },
-  { label: "LEADERSHIP", val: "President @ Shiba Re-Ignite Org" },
-  { label: "SECURITY", val: "Google Network Security Certified" },
-  { label: "AI WORKFLOWS", val: "Google AI Specialization Certified" },
+const competencies = [
+  "Next.js",
+  "TypeScript",
+  "Supabase",
+  "FastAPI",
+  "Canvas 2D",
+  "Docker",
+  "GSAP",
+  "Zod",
 ];
 ---
 
-<section id="about" class="about-section">
+<section id="about" class="about-section" aria-label="System Dossier & Background">
   <div class="section-container">
-    <!-- Section Header -->
+    <!-- Section Top Header -->
     <div class="section-header">
       <div class="header-left">
         <span class="section-tag mono-hud">
           <span class="hud-slash">//</span> 02. SYSTEM DOSSIER &amp; BIO
         </span>
-        <h2 class="section-title">Engineering background &amp; philosophy.</h2>
+        <h2 class="section-title">Operative background &amp; engineering principles.</h2>
       </div>
       <div class="header-right">
         <span class="mono-hud status-online">
@@ -32,88 +57,201 @@ const credentials = [
       </div>
     </div>
 
-    <!-- Bento Grid Structure for System Dossier -->
-    <div class="about-bento">
-      <!-- Row 1: Narrative Philosophy + Live Station Telemetry -->
-      <div class="bento-row two-cols">
-        <!-- Card 1: Bio & Approach -->
-        <div class="bento-card card-narrative glass-panel">
-          <div class="card-bar mono-hud">
-            <span class="id-badge">OPERATIVE: AA KIKZ H. AFABLE</span>
-            <span class="sub-badge">BGC_STATION</span>
+    <!-- Main Operative Grid: Left Identity Card + Right Intel & Telemetry -->
+    <div class="dossier-grid">
+      <!-- Left Column: Operative Identity Profile Card -->
+      <aside class="operative-card glass-panel" aria-label="Operative Identity Card">
+        <!-- Card HUD Bar -->
+        <div class="card-bar mono-hud">
+          <span class="id-badge">OPERATIVE_ID // 01</span>
+          <span class="status-pill text-green">● ACTIVE STATUS</span>
+        </div>
+
+        <!-- Identity Header: Photo + Name + Call-sign -->
+        <div class="avatar-row">
+          <div class="avatar-frame">
+            <span class="crosshair-tl">+</span>
+            <span class="crosshair-tr">+</span>
+            <span class="crosshair-bl">+</span>
+            <span class="crosshair-br">+</span>
+            <img
+              src="/avatar.jpg"
+              alt="AA Kikz H. Afable"
+              class="avatar-img"
+              width="110"
+              height="110"
+              loading="eager"
+            />
+            <div class="avatar-scanline" aria-hidden="true"></div>
           </div>
 
-          <h3 class="narrative-heading">
-            Bridging high-performance interfaces with resilient cloud architectures.
-          </h3>
+          <div class="avatar-meta">
+            <h3 class="operative-name">AA Kikz H. Afable</h3>
+            <div class="callsign mono-hud">CALLSIGN: <span class="text-white">kikkoman-4</span></div>
+            <div class="operative-role mono-hud">JUNIOR FULL-STACK &amp; SYSTEMS ENGINEER</div>
+          </div>
+        </div>
 
-          <p class="narrative-p">
-            Computer Science graduate based in BGC, Taguig, specializing in full-stack development, AI workflows, and high-performance interactive architectures. Focused on speed, reliability, and measurable client impact.
-          </p>
+        <!-- Narrative Mission Statement -->
+        <p class="operative-bio">
+          Fresh graduate from STI College Lucena specializing in modern web applications, zero-dependency 60 FPS canvas engines, and scalable full-stack portals. Dedicated to engineering robust architectures with speed, reliability, and precision.
+        </p>
 
-          <!-- Verified Credentials Grid -->
-          <div class="creds-list mono-hud">
+        <!-- Identity Contact & Meta List -->
+        <div class="meta-pills mono-hud">
+          <div class="meta-item">
+            <span class="meta-icon">📍</span>
+            <span class="meta-text">BGC &amp; Tayabas, Philippines</span>
+          </div>
+          <a href="mailto:kikzafable@gmail.com" class="meta-item meta-link" title="Send Email">
+            <span class="meta-icon">✉️</span>
+            <span class="meta-text">kikzafable@gmail.com</span>
+          </a>
+          <div class="meta-item">
+            <span class="meta-icon">🌐</span>
+            <span class="meta-text">English &amp; Filipino <span class="text-green">[FLUENT]</span></span>
+          </div>
+        </div>
+
+        <!-- Core Strengths / Tech Stack Tags -->
+        <div class="competencies-block">
+          <div class="block-label mono-hud">CORE COMPETENCIES // TECHNICAL ARSENAL</div>
+          <div class="chips-wrap mono-hud">
+            {competencies.map((c) => <span class="chip">{c}</span>)}
+          </div>
+        </div>
+
+        <!-- Social Action Links -->
+        <div class="card-actions mono-hud">
+          <a
+            href="https://github.com/kikkoman-4"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="action-btn"
+          >
+            GITHUB PROFILE ↗
+          </a>
+          <a
+            href="https://linkedin.com/in/kikz-afable"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="action-btn"
+          >
+            LINKEDIN DOSSIER ↗
+          </a>
+        </div>
+      </aside>
+
+      <!-- Right Column: Terminal Intel (Academics + Telemetry) + Milestone Matrix -->
+      <div class="intel-column">
+        <!-- Top Pane: Cybernetic Terminal Window (Academics & Station Telemetry) -->
+        <div class="terminal-card glass-panel" aria-label="Academics and Station Telemetry Console">
+          <!-- Terminal Title Bar with OS Traffic Dots -->
+          <div class="term-bar mono-hud">
+            <div class="term-dots" aria-hidden="true">
+              <span class="tdot close"></span>
+              <span class="tdot min"></span>
+              <span class="tdot max"></span>
+            </div>
+            <span class="term-title">tty0 // station-telemetry &amp; academic-dossier</span>
+            <span class="term-clock mono-hud text-green">
+              <span class="clock-icon">⏱</span> <span id="about-clock">--:--:--</span> PHT (UTC+8)
+            </span>
+          </div>
+
+          <!-- Terminal Content Viewport -->
+          <div class="term-screen mono-hud">
+            <!-- Terminal Prompt Header -->
+            <div class="term-prompt">
+              <span class="text-green">kikz@operative:~$</span>
+              <span class="text-white">telemetry --academic --verbose</span>
+            </div>
+
+            <!-- Terminal Key/Value Data Grid -->
+            <div class="term-grid">
+              <!-- Left Column: Core Academics & Credentials -->
+              <div class="term-col">
+                <div class="term-section-label text-hud">// ACADEMIC_CREDENTIALS</div>
+                <div class="term-kv">
+                  <span class="k">DEGREE:</span>
+                  <span class="v text-white">BS in Computer Science (2022 - 2026)</span>
+                </div>
+                <div class="term-kv">
+                  <span class="k">INSTITUTE:</span>
+                  <span class="v">STI College Lucena <span class="text-green">[DEAN'S LISTER]</span></span>
+                </div>
+                <div class="term-kv">
+                  <span class="k">DIPLOMA:</span>
+                  <span class="v">Mobile App &amp; Web Development (2020 - 2022)</span>
+                </div>
+                <div class="term-kv">
+                  <span class="k">LEADERSHIP:</span>
+                  <span class="v">President @ Shiba Re-Ignite Org</span>
+                </div>
+                <div class="term-kv">
+                  <span class="k">SECURITY:</span>
+                  <span class="v">Google Network Security Certified</span>
+                </div>
+                <div class="term-kv">
+                  <span class="k">AI_AGENT:</span>
+                  <span class="v">Google AI Specialization Certified</span>
+                </div>
+              </div>
+
+              <!-- Right Column: Live Station Telemetry -->
+              <div class="term-col">
+                <div class="term-section-label text-hud">// STATION_TELEMETRY</div>
+                <div class="term-kv">
+                  <span class="k">TIMEZONE:</span>
+                  <span class="v">PHT // UTC+8 (Philippine Standard Time)</span>
+                </div>
+                <div class="term-kv">
+                  <span class="k">COORDINATES:</span>
+                  <span class="v">14.55° N, 121.05° E (BGC / Tayabas Station)</span>
+                </div>
+                <div class="term-kv">
+                  <span class="k">STATUS:</span>
+                  <span class="v text-green">AVAILABLE FOR CONTRACT &amp; FULL-TIME</span>
+                </div>
+                <div class="term-kv">
+                  <span class="k">PIPELINE:</span>
+                  <span class="v">99.9% UPTIME // CI/CD AUTOMATION</span>
+                </div>
+                <div class="term-kv">
+                  <span class="k">INQUIRY_SLA:</span>
+                  <span class="v">&lt; 24 HOURS GUARANTEED RESPONSE</span>
+                </div>
+                <div class="term-kv">
+                  <span class="k">FRAMEWORK:</span>
+                  <span class="v">Zero-Dependency 60 FPS Canvas &amp; Audio Core</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Pane: 4-Column HUD Milestone Matrix -->
+        <div class="matrix-card glass-panel" aria-label="Quantified Milestone Matrix">
+          <div class="matrix-bar mono-hud">
+            <span>MILESTONE_MATRIX</span>
+            <span class="text-green">// VERIFIED_BENCHMARKS &amp; DELIVERABLES</span>
+          </div>
+
+          <div class="matrix-grid">
             {
-              credentials.map((c) => (
-                <div class="cred-row">
-                  <span class="cred-k">{c.label}:</span>
-                  <span class="cred-v">{c.val}</span>
+              milestones.map((m) => (
+                <div class="milestone-box">
+                  <div class="box-top mono-hud">
+                    <span class="box-tag">{m.tag}</span>
+                    <span class="box-dot">●</span>
+                  </div>
+                  <div class="box-val">{m.val}</div>
+                  <div class="box-label mono-hud">{m.label}</div>
+                  <div class="box-sub">{m.sub}</div>
                 </div>
               ))
             }
           </div>
-        </div>
-
-        <!-- Card 2: Live Station Telemetry -->
-        <div class="bento-card card-telemetry glass-panel">
-          <div class="card-bar mono-hud">
-            <span>STATION_TELEMETRY</span>
-            <span class="text-green">[LIVE_FEED]</span>
-          </div>
-
-          <div class="time-widget">
-            <div class="time-display" id="about-clock">--:--:--</div>
-            <div class="tz-label mono-hud">PHT // UTC+8 • PHILIPPINE STANDARD TIME</div>
-          </div>
-
-          <div class="telemetry-rows mono-hud">
-            <div class="tele-row">
-              <span class="k">LOCATION:</span>
-              <span class="v">BGC, Taguig (14.55° N, 121.05° E)</span>
-            </div>
-            <div class="tele-row">
-              <span class="k">STATUS:</span>
-              <span class="v text-green">AVAILABLE FOR CONTRACT &amp; FULL-TIME</span>
-            </div>
-            <div class="tele-row">
-              <span class="k">PIPELINE:</span>
-              <span class="v">99.9% UPTIME // CI/CD AUTOMATION</span>
-            </div>
-            <div class="tele-row">
-              <span class="k">RESPONSE:</span>
-              <span class="v">&lt; 24 HOURS INQUIRY SLA</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Row 2: Verified Performance Benchmarks Full Width -->
-      <div class="bento-card card-benchmarks glass-panel">
-        <div class="card-bar mono-hud">
-          <span>VERIFIED_BENCHMARKS</span>
-          <span class="text-hud">// LOGGED IMPACT</span>
-        </div>
-
-        <div class="benchmarks-stack">
-          {
-            verifiedMetrics.map((m) => (
-              <div class="benchmark-item">
-                <div class="bench-val">{m.value}</div>
-                <div class="bench-label mono-hud">{m.label}</div>
-                <div class="bench-sub">{m.sub}</div>
-              </div>
-            ))
-          }
         </div>
       </div>
     </div>
@@ -123,39 +261,42 @@ const credentials = [
 <style>
   .about-section {
     width: 100%;
-    max-width: var(--max-width);
+    max-width: min(1560px, 96vw);
     margin: 0 auto;
     height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    padding: clamp(0.5rem, 1.5vh, 1.5rem) clamp(0.75rem, 2vw, 1.5rem);
+    padding: 0;
     position: relative;
     z-index: 10;
   }
 
   .section-container {
     width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
-    gap: clamp(0.6rem, 1.5vh, 1.25rem);
+    justify-content: space-between;
+    gap: clamp(0.5rem, 1.4vh, 1rem);
   }
 
+  /* Header */
   .section-header {
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
-    padding-bottom: clamp(0.4rem, 1vh, 0.75rem);
+    padding-bottom: clamp(0.35rem, 0.8vh, 0.65rem);
     border-bottom: 1px solid var(--color-border);
     flex-wrap: wrap;
     gap: 0.5rem;
+    flex-shrink: 0;
   }
 
   .section-tag {
     color: var(--color-text-muted);
     display: block;
-    font-size: clamp(0.65rem, 1vw, 0.72rem);
-    margin-bottom: 0.25rem;
+    font-size: clamp(0.65rem, 0.95vw, 0.74rem);
+    margin-bottom: 0.2rem;
   }
 
   .hud-slash {
@@ -163,221 +304,463 @@ const credentials = [
   }
 
   .section-title {
-    font-size: clamp(1.25rem, 2.8vw, 2.1rem);
+    font-size: clamp(1.35rem, 2.6vw, 2.2rem);
     font-weight: 700;
     color: #ffffff;
     letter-spacing: -0.02em;
+    line-height: 1.15;
   }
 
   .status-online {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    font-size: 0.68rem;
+    gap: 0.45rem;
+    font-size: 0.7rem;
     color: var(--color-text-sub);
   }
 
-  /* Bento Layout */
-  .about-bento {
-    display: flex;
-    flex-direction: column;
-    gap: clamp(0.6rem, 1.5vh, 1.15rem);
-  }
-
-  .bento-row {
+  /* 2-Column Dossier Grid: Fully fills available vertical and horizontal space */
+  .dossier-grid {
+    flex: 1;
     display: grid;
-    gap: clamp(0.6rem, 1.5vh, 1.15rem);
+    grid-template-columns: minmax(320px, 390px) 1fr;
+    gap: clamp(0.75rem, 1.6vw, 1.5rem);
+    align-items: stretch;
+    min-height: 0;
   }
 
-  .bento-row.two-cols {
-    grid-template-columns: 1.25fr 1fr;
-  }
-
-  .bento-card {
-    padding: clamp(0.75rem, 1.5vh, 1.35rem);
-    background: rgba(10, 12, 16, 0.75);
+  /* Glass Card Base */
+  .operative-card,
+  .terminal-card,
+  .matrix-card {
+    background: rgba(10, 12, 16, 0.78);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
-    transition: all var(--transition-normal);
+    padding: clamp(0.75rem, 1.6vh, 1.25rem);
+    display: flex;
+    flex-direction: column;
+    transition: border-color var(--transition-normal);
   }
 
-  .bento-card:hover {
+  .operative-card:hover,
+  .terminal-card:hover,
+  .matrix-card:hover {
     border-color: var(--color-border-hover);
   }
 
-  .card-bar {
+  .card-bar,
+  .term-bar,
+  .matrix-bar {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 0.68rem;
+    font-size: clamp(0.64rem, 0.85vw, 0.72rem);
     color: var(--color-text-muted);
-    padding-bottom: clamp(0.35rem, 0.8vh, 0.65rem);
+    padding-bottom: clamp(0.35rem, 0.7vh, 0.55rem);
     border-bottom: 1px solid var(--color-border-subtle);
     margin-bottom: clamp(0.5rem, 1vh, 0.85rem);
+    flex-shrink: 0;
   }
 
-  .id-badge {
-    color: var(--color-text-sub);
+  /* Left Column: Operative Identity */
+  .operative-card {
+    height: 100%;
+    justify-content: space-between;
+    gap: clamp(0.4rem, 0.9vh, 0.75rem);
   }
 
-  .sub-badge {
-    color: var(--color-text-hud);
+  .avatar-row {
+    display: flex;
+    align-items: center;
+    gap: clamp(0.75rem, 1.4vw, 1.15rem);
   }
 
-  /* Narrative */
-  .narrative-heading {
-    font-size: clamp(0.95rem, 1.8vw, 1.25rem);
+  .avatar-frame {
+    position: relative;
+    width: clamp(82px, 11vh, 108px);
+    height: clamp(82px, 11vh, 108px);
+    flex-shrink: 0;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.45);
+    padding: 3px;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 2px;
+    display: block;
+    filter: contrast(1.05);
+  }
+
+  .avatar-scanline {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      rgba(34, 197, 94, 0.08) 50%,
+      transparent 100%
+    );
+    pointer-events: none;
+    animation: scanline 3s infinite linear;
+  }
+
+  @keyframes scanline {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
+  }
+
+  /* Corner Crosshairs */
+  .crosshair-tl,
+  .crosshair-tr,
+  .crosshair-bl,
+  .crosshair-br {
+    position: absolute;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--color-accent-green);
+    line-height: 1;
+    user-select: none;
+    z-index: 2;
+  }
+  .crosshair-tl { top: 1px; left: 2px; }
+  .crosshair-tr { top: 1px; right: 2px; }
+  .crosshair-bl { bottom: 1px; left: 2px; }
+  .crosshair-br { bottom: 1px; right: 2px; }
+
+  .avatar-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    min-width: 0;
+  }
+
+  .operative-name {
+    font-size: clamp(1.15rem, 1.7vw, 1.45rem);
     font-weight: 700;
     color: #ffffff;
-    line-height: 1.3;
-    margin-bottom: clamp(0.35rem, 0.8vh, 0.65rem);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
   }
 
-  .narrative-p {
-    font-size: clamp(0.78rem, 1.2vw, 0.88rem);
+  .callsign {
+    font-size: clamp(0.68rem, 0.9vw, 0.76rem);
+    color: var(--color-text-hud);
+    letter-spacing: 0.05em;
+  }
+
+  .operative-role {
+    font-size: clamp(0.62rem, 0.8vw, 0.68rem);
+    color: var(--color-accent-green);
+    letter-spacing: 0.04em;
+    line-height: 1.35;
+    font-weight: 600;
+  }
+
+  .operative-bio {
+    font-size: clamp(0.76rem, 1vw, 0.86rem);
     line-height: 1.55;
     color: var(--color-text-sub);
-    margin-bottom: clamp(0.45rem, 1vh, 0.85rem);
   }
 
-  /* Credentials */
-  .creds-list {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: clamp(0.35rem, 0.8vh, 0.65rem);
-    margin-top: clamp(0.35rem, 0.8vh, 0.65rem);
-    padding-top: clamp(0.35rem, 0.8vh, 0.65rem);
-    border-top: 1px solid var(--color-border-subtle);
-  }
-
-  .cred-row {
+  .meta-pills {
     display: flex;
     flex-direction: column;
-    gap: 0.1rem;
-    font-size: 0.68rem;
-  }
-
-  .cred-k {
-    color: var(--color-text-hud);
-    font-size: 0.62rem;
-  }
-
-  .cred-v {
-    color: #ffffff;
-    font-weight: 500;
-  }
-
-  /* Telemetry Clock */
-  .card-telemetry {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-
-  .time-widget {
-    margin: clamp(0.35rem, 0.8vh, 0.75rem) 0;
-    padding: clamp(0.5rem, 1vh, 0.85rem);
-    background: rgba(0, 0, 0, 0.35);
+    gap: clamp(0.3rem, 0.6vh, 0.45rem);
+    font-size: clamp(0.68rem, 0.9vw, 0.76rem);
+    padding: clamp(0.5rem, 1vh, 0.75rem) 0.75rem;
+    background: rgba(0, 0, 0, 0.3);
     border: 1px solid var(--color-border-subtle);
     border-radius: var(--radius-sm);
-    text-align: center;
   }
 
-  .time-display {
-    font-family: var(--font-mono);
-    font-size: clamp(1.4rem, 3.2vw, 2.2rem);
-    font-weight: 700;
-    color: #ffffff;
-    letter-spacing: 0.08em;
-  }
-
-  .tz-label {
-    font-size: 0.62rem;
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     color: var(--color-text-sub);
+  }
+
+  .meta-link {
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+  .meta-link:hover {
+    color: #ffffff;
+  }
+
+  .competencies-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .block-label {
+    font-size: clamp(0.6rem, 0.8vw, 0.66rem);
+    color: var(--color-text-hud);
+    letter-spacing: 0.05em;
+  }
+
+  .chips-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  .chip {
+    font-size: clamp(0.62rem, 0.8vw, 0.7rem);
+    padding: 0.2rem 0.55rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-sm);
+    color: var(--color-text-sub);
+    transition: all var(--transition-fast);
+  }
+
+  .chip:hover {
+    border-color: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .card-actions {
+    display: flex;
+    gap: 0.5rem;
     margin-top: 0.2rem;
   }
 
-  .telemetry-rows {
+  .action-btn {
+    flex: 1;
+    text-align: center;
+    padding: clamp(0.45rem, 0.9vh, 0.65rem) 0.75rem;
+    font-size: clamp(0.66rem, 0.85vw, 0.74rem);
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--color-text-sub);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+  }
+
+  .action-btn:hover {
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  /* Right Column: Intel (Terminal + Milestones) */
+  .intel-column {
     display: flex;
     flex-direction: column;
-    gap: clamp(0.3rem, 0.7vh, 0.55rem);
-    font-size: 0.68rem;
+    gap: clamp(0.6rem, 1.4vh, 1.15rem);
+    min-width: 0;
+    height: 100%;
   }
 
-  .tele-row {
+  /* Terminal Window - Prominently expanded */
+  .terminal-card {
+    flex: 1.25;
+    background: rgba(8, 10, 14, 0.88);
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px dashed rgba(255, 255, 255, 0.04);
-    padding-bottom: 0.25rem;
+    flex-direction: column;
   }
 
-  .tele-row .k {
+  .term-dots {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .tdot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+  }
+  .tdot.close { background: #ef4444; opacity: 0.85; }
+  .tdot.min { background: #eab308; opacity: 0.85; }
+  .tdot.max { background: #22c55e; opacity: 0.85; }
+
+  .term-title {
+    font-size: clamp(0.64rem, 0.85vw, 0.72rem);
     color: var(--color-text-hud);
   }
 
-  .tele-row .v {
-    color: var(--color-text-sub);
-    font-weight: 500;
+  .term-clock {
+    font-size: clamp(0.66rem, 0.88vw, 0.74rem);
+    font-weight: 600;
   }
 
-  /* Benchmarks */
-  .benchmarks-stack {
+  .term-screen {
+    flex: 1;
+    padding: clamp(0.45rem, 1vh, 0.85rem) clamp(0.5rem, 1vw, 0.85rem);
+    font-size: clamp(0.7rem, 0.98vw, 0.82rem);
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    gap: clamp(0.4rem, 0.9vh, 0.75rem);
+  }
+
+  .term-prompt {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    padding-bottom: 0.35rem;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+    font-size: clamp(0.72rem, 1vw, 0.84rem);
+  }
+
+  .term-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(0.75rem, 1.8vw, 1.6rem);
+  }
+
+  .term-col {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(0.25rem, 0.6vh, 0.45rem);
+  }
+
+  .term-section-label {
+    font-size: clamp(0.64rem, 0.85vw, 0.72rem);
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+  }
+
+  .term-kv {
+    display: flex;
+    gap: 0.5rem;
+    align-items: baseline;
+    font-size: clamp(0.68rem, 0.92vw, 0.78rem);
+  }
+
+  .term-kv .k {
+    color: var(--color-text-hud);
+    flex-shrink: 0;
+    min-width: 80px;
+  }
+
+  .term-kv .v {
+    color: var(--color-text-sub);
+    word-break: break-word;
+  }
+
+  /* Milestone Matrix - Taller, bolder & impactful */
+  .matrix-card {
+    flex: 0.95;
+    padding: clamp(0.65rem, 1.4vh, 1.15rem);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .matrix-grid {
+    flex: 1;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: clamp(0.5rem, 1vw, 1.25rem);
+    gap: clamp(0.5rem, 1vw, 1rem);
+    align-items: stretch;
   }
 
-  .benchmark-item {
-    padding: clamp(0.4rem, 0.8vh, 0.75rem);
-    background: rgba(0, 0, 0, 0.25);
+  .milestone-box {
+    padding: clamp(0.55rem, 1.2vh, 0.95rem);
+    background: rgba(0, 0, 0, 0.35);
     border: 1px solid var(--color-border-subtle);
     border-radius: var(--radius-sm);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all var(--transition-fast);
   }
 
-  .bench-val {
+  .milestone-box:hover {
+    border-color: rgba(34, 197, 94, 0.35);
+    background: rgba(34, 197, 94, 0.03);
+    transform: translateY(-1px);
+  }
+
+  .box-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: clamp(0.58rem, 0.8vw, 0.65rem);
+    color: var(--color-text-hud);
+    margin-bottom: 0.2rem;
+  }
+
+  .box-dot {
+    color: var(--color-accent-green);
+    font-size: 0.45rem;
+  }
+
+  .box-val {
     font-family: var(--font-mono);
-    font-size: clamp(1.15rem, 2.2vw, 1.7rem);
+    font-size: clamp(1.4rem, 2.6vw, 2.2rem);
     font-weight: 800;
     color: #ffffff;
     line-height: 1.1;
   }
 
-  .bench-label {
-    font-size: 0.62rem;
+  .box-label {
+    font-size: clamp(0.64rem, 0.85vw, 0.72rem);
     color: var(--color-accent-green);
-    margin: 0.2rem 0 0.1rem;
+    margin: 0.2rem 0 0.15rem;
     letter-spacing: 0.04em;
+    line-height: 1.25;
+    font-weight: 600;
   }
 
-  .bench-sub {
-    font-size: 0.65rem;
+  .box-sub {
+    font-size: clamp(0.65rem, 0.88vw, 0.74rem);
     color: var(--color-text-muted);
-    line-height: 1.3;
+    line-height: 1.35;
+  }
+
+  /* Responsive Breakpoints */
+  @media (max-width: 1024px) {
+    .dossier-grid {
+      grid-template-columns: minmax(290px, 340px) 1fr;
+      gap: 0.75rem;
+    }
   }
 
   @media (max-width: 900px) {
-    .bento-row.two-cols {
+    .dossier-grid {
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+
+    .term-grid {
       grid-template-columns: 1fr;
     }
 
-    .benchmarks-stack {
+    .matrix-grid {
       grid-template-columns: repeat(2, 1fr);
     }
   }
 
-  @media (max-width: 540px) {
-    .creds-list {
-      grid-template-columns: 1fr;
-    }
-
-    .card-telemetry {
-      display: none; /* Hide secondary telemetry on ultra-compact mobile to guarantee 100% force fit */
-    }
-
-    .benchmarks-stack {
+  @media (max-width: 580px) {
+    .matrix-grid {
       grid-template-columns: repeat(2, 1fr);
       gap: 0.4rem;
+    }
+
+    .meta-pills {
+      font-size: 0.64rem;
+    }
+
+    .operative-name {
+      font-size: 1.05rem;
+    }
+
+    .avatar-frame {
+      width: 72px;
+      height: 72px;
     }
   }
 </style>

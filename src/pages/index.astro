@@ -227,7 +227,7 @@ import SlideControls from "@components/SlideControls.astro";
     opacity: 1 !important;
   }
 
-  /* Inner viewport - Force fit to screen */
+  /* Inner viewport - Force fit to screen with maximum space utilization */
   .slide-inner {
     width: 100%;
     height: 100%;
@@ -236,7 +236,7 @@ import SlideControls from "@components/SlideControls.astro";
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: clamp(0.5rem, 1.5vh, 1.5rem) clamp(0.75rem, 2.5vw, 2rem) calc(var(--hud-inset) + clamp(3.2rem, 5.5vh, 4.5rem));
+    padding: clamp(0.35rem, 0.8vh, 0.85rem) clamp(0.6rem, 1.8vw, 1.5rem) calc(var(--hud-inset) + clamp(2.8rem, 4.6vh, 3.6rem));
     box-sizing: border-box;
   }
 
@@ -251,7 +251,6 @@ import SlideControls from "@components/SlideControls.astro";
 
   /* Component layout adjustments inside presentation slides */
   .slide-panel :global(.hero-section),
-  .slide-panel :global(.about-section),
   .slide-panel :global(.terminal-section),
   .slide-panel :global(.projects-section),
   .slide-panel :global(.experience-section),
@@ -264,6 +263,17 @@ import SlideControls from "@components/SlideControls.astro";
     display: flex;
     flex-direction: column;
     justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .slide-panel :global(.about-section) {
+    width: 100%;
+    max-width: min(1580px, 96vw);
+    margin: 0 auto;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
     flex-shrink: 0;
   }
 </style>
