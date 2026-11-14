@@ -1,0 +1,268 @@
+---
+// SkillsSection.astro - Technical skills arsenal categorized with cybernetic chips
+const skillCategories = [
+  {
+    title: "LANGUAGES & CORE",
+    skills: ["TypeScript", "JavaScript", "Python", "C#", "Java", "SQL", "HTML5/CSS3"],
+  },
+  {
+    title: "FRONTEND & UI",
+    skills: [
+      "React",
+      "Next.js",
+      "Tailwind CSS",
+      "Astro",
+      "React Native",
+      "TanStack Query",
+      "Framer Motion",
+      "GSAP",
+      "Radix UI",
+      "shadcn/ui",
+    ],
+  },
+  {
+    title: "BACKEND & CLOUD",
+    skills: [
+      "Node.js",
+      "FastAPI",
+      "RESTful APIs",
+      "PostgreSQL",
+      "Supabase",
+      "Firebase",
+      "GCP",
+      "Azure",
+    ],
+  },
+  {
+    title: "DEVOPS & TOOLS",
+    skills: [
+      "Docker",
+      "Kubernetes",
+      "Git & GitHub Actions",
+      "Postman",
+      "Selenium",
+      "n8n Automation",
+      "Stripe",
+      "PayMongo",
+    ],
+  },
+];
+
+const certifications = [
+  "Google Network Security Specialization",
+  "Google AI Specialization",
+  "Google Agile & Scrum Framework",
+  "Google Data Analysis with Python",
+];
+---
+
+<section id="skills" class="skills-section">
+  <div class="section-container">
+    <div class="section-header">
+      <div class="header-left">
+        <span class="section-tag mono-hud">
+          <span class="hud-slash">//</span> 04. TECHNICAL ARSENAL
+        </span>
+        <h2 class="section-title">Core capabilities.</h2>
+      </div>
+      <div class="header-right">
+        <span class="mono-hud">SYS_MODULE: PRODUCTION_READY</span>
+      </div>
+    </div>
+
+    <!-- Skills Grid -->
+    <div class="skills-grid">
+      {
+        skillCategories.map((cat, idx) => (
+          <div class="category-card glass-panel">
+            <div class="cat-header mono-hud">
+              <span class="cat-idx">0{idx + 1}</span>
+              <h3 class="cat-title">{cat.title}</h3>
+            </div>
+            <div class="chips-container">
+              {cat.skills.map((skill) => (
+                <span class="skill-chip">
+                  <span class="chip-dot" aria-hidden="true">•</span>
+                  <span>{skill}</span>
+                </span>
+              ))}
+            </div>
+          </div>
+        ))
+      }
+    </div>
+
+    <!-- Certifications Strip -->
+    <div class="certs-strip glass-panel">
+      <div class="certs-header mono-hud">
+        <span class="status-dot"></span>
+        <span>VERIFIED CERTIFICATIONS</span>
+      </div>
+      <div class="certs-list">
+        {
+          certifications.map((cert) => (
+            <span class="cert-item mono-hud">{cert}</span>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .skills-section {
+    width: 100%;
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 4.5rem 1.5rem;
+    position: relative;
+    z-index: 10;
+  }
+
+  .section-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--color-border);
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .section-tag {
+    color: var(--color-text-muted);
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .hud-slash {
+    color: var(--color-accent-red);
+  }
+
+  .section-title {
+    font-size: clamp(1.8rem, 3.2vw, 2.4rem);
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+  }
+
+  /* Skills Grid */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .category-card {
+    padding: 1.75rem;
+    background: rgba(12, 14, 18, 0.7);
+    border: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    transition: all var(--transition-normal);
+  }
+
+  .category-card:hover {
+    border-color: var(--color-border-hover);
+    background: rgba(16, 18, 24, 0.85);
+  }
+
+  .cat-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--color-border-subtle);
+  }
+
+  .cat-idx {
+    color: var(--color-text-hud);
+  }
+
+  .cat-title {
+    font-size: 0.78rem;
+    color: #ffffff;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+  }
+
+  .chips-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .skill-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.38rem 0.85rem;
+    border-radius: var(--radius-pill);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--color-border-subtle);
+    font-size: 0.8rem;
+    color: var(--color-text-sub);
+    transition: all var(--transition-fast);
+  }
+
+  .skill-chip:hover {
+    background: #ffffff;
+    color: #000000;
+    border-color: #ffffff;
+    transform: translateY(-1px);
+  }
+
+  .chip-dot {
+    font-size: 0.9rem;
+    line-height: 0;
+    color: var(--color-text-hud);
+  }
+
+  .skill-chip:hover .chip-dot {
+    color: #000000;
+  }
+
+  /* Certifications Strip */
+  .certs-strip {
+    padding: 1.25rem 1.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    background: rgba(10, 12, 16, 0.7);
+    border: 1px solid var(--color-border);
+  }
+
+  .certs-header {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: #ffffff;
+    font-size: 0.75rem;
+  }
+
+  .certs-list {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+  }
+
+  .cert-item {
+    font-size: 0.72rem;
+    color: var(--color-text-muted);
+    padding: 0.25rem 0.6rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px dashed var(--color-border-subtle);
+    border-radius: var(--radius-xs);
+  }
+</style>
+

@@ -1,0 +1,489 @@
+---
+// WireframeEngine.astro - Zero-dependency 3D Canvas Interactive Engine with Live 60 FPS Telemetry
+---
+
+<div class="engine-wrapper" id="engine-root">
+  <!-- HUD Header Overlay -->
+  <div class="engine-hud-top mono-hud">
+    <div class="hud-stat-group">
+      <span class="status-dot"></span>
+      <span class="hud-label">CANVAS_CORE // v2.6.0</span>
+    </div>
+    <div class="hud-metrics">
+      <span class="metric-fps" id="engine-fps">60.0 FPS</span>
+      <span class="metric-divider">/</span>
+      <span class="metric-ms" id="engine-ms">16.6ms</span>
+    </div>
+  </div>
+
+  <!-- Interactive 3D Canvas -->
+  <div class="canvas-viewport">
+    <canvas id="engine-canvas" width="560" height="560" aria-label="3D Interactive Wireframe Core"></canvas>
+
+    <!-- Corner Reticles -->
+    <div class="reticle top-left"></div>
+    <div class="reticle top-right"></div>
+    <div class="reticle bottom-left"></div>
+    <div class="reticle bottom-right"></div>
+  </div>
+
+  <!-- HUD Control Deck -->
+  <div class="engine-hud-bottom">
+    <div class="mode-toggles mono-hud" role="tablist" aria-label="Engine Visual Modes">
+      <button type="button" class="mode-btn active" data-mode="tesseract">POLYHEDRON</button>
+      <button type="button" class="mode-btn" data-mode="particles">PARTICLES</button>
+      <button type="button" class="mode-btn" data-mode="topology">TOPOLOGY</button>
+    </div>
+
+    <div class="hud-coordinate mono-hud">
+      <span>POS: <span id="engine-coords">[0.00, 0.00]</span></span>
+    </div>
+  </div>
+</div>
+
+<style>
+  .engine-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+    background: rgba(10, 12, 16, 0.75);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.85);
+  }
+
+  .engine-hud-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid var(--color-border-subtle);
+    font-size: 0.72rem;
+  }
+
+  .hud-stat-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .hud-label {
+    color: var(--color-text-sub);
+    letter-spacing: 0.1em;
+  }
+
+  .hud-metrics {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: var(--color-text-muted);
+  }
+
+  .metric-fps {
+    color: var(--color-accent-green);
+    font-weight: 600;
+  }
+
+  .metric-divider {
+    color: var(--color-text-hud);
+  }
+
+  /* Viewport */
+  .canvas-viewport {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin: 0.75rem 0;
+    cursor: grab;
+  }
+
+  .canvas-viewport:active {
+    cursor: grabbing;
+  }
+
+  canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.06));
+  }
+
+  /* Corner Reticles */
+  .reticle {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    pointer-events: none;
+    border-color: var(--color-border-hover);
+  }
+
+  .reticle.top-left {
+    top: 6px;
+    left: 6px;
+    border-top: 1px solid;
+    border-left: 1px solid;
+  }
+
+  .reticle.top-right {
+    top: 6px;
+    right: 6px;
+    border-top: 1px solid;
+    border-right: 1px solid;
+  }
+
+  .reticle.bottom-left {
+    bottom: 6px;
+    left: 6px;
+    border-bottom: 1px solid;
+    border-left: 1px solid;
+  }
+
+  .reticle.bottom-right {
+    bottom: 6px;
+    right: 6px;
+    border-bottom: 1px solid;
+    border-right: 1px solid;
+  }
+
+  /* HUD Control Deck */
+  .engine-hud-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 0.85rem;
+    border-top: 1px solid var(--color-border-subtle);
+    font-size: 0.72rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .mode-toggles {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .mode-btn {
+    padding: 0.25rem 0.6rem;
+    border-radius: var(--radius-xs);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--color-border-subtle);
+    color: var(--color-text-muted);
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .mode-btn:hover {
+    color: #ffffff;
+    border-color: var(--color-border-hover);
+  }
+
+  .mode-btn.active {
+    background: #ffffff;
+    color: #000000;
+    border-color: #ffffff;
+    font-weight: 600;
+  }
+
+  .hud-coordinate {
+    color: var(--color-text-hud);
+  }
+
+  @media (max-width: 640px) {
+    .engine-wrapper {
+      padding: 1rem;
+    }
+  }
+</style>
+
+<script>
+  // Zero-Dependency 3D Canvas Engine
+  function initEngine() {
+    const canvas = document.getElementById("engine-canvas") as HTMLCanvasElement | null;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const fpsEl = document.getElementById("engine-fps");
+    const msEl = document.getElementById("engine-ms");
+    const coordsEl = document.getElementById("engine-coords");
+    const modeBtns = document.querySelectorAll(".mode-btn");
+
+    let currentMode = "tesseract";
+
+    modeBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        modeBtns.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentMode = btn.getAttribute("data-mode") || "tesseract";
+      });
+    });
+
+    const width = (canvas.width = 560);
+    const height = (canvas.height = 560);
+    const cx = width / 2;
+    const cy = height / 2;
+
+    // 3D Math Vertices & Edges (Icosahedron + Dual Dodecahedron Core)
+    const phi = (1 + Math.sqrt(5)) / 2;
+    const baseVertices = [
+      [-1,  phi, 0], [ 1,  phi, 0], [-1, -phi, 0], [ 1, -phi, 0],
+      [ 0, -1,  phi], [ 0,  1,  phi], [ 0, -1, -phi], [ 0,  1, -phi],
+      [ phi, 0, -1], [ phi, 0,  1], [-phi, 0, -1], [-phi, 0,  1]
+    ];
+
+    const scale = 110;
+    const vertices = baseVertices.map(([x, y, z]) => ({
+      x: x * scale,
+      y: y * scale,
+      z: z * scale,
+    }));
+
+    // Edges between vertices
+    const edges: [number, number][] = [];
+    for (let i = 0; i < vertices.length; i++) {
+      for (let j = i + 1; j < vertices.length; j++) {
+        const dx = vertices[i].x - vertices[j].x;
+        const dy = vertices[i].y - vertices[j].y;
+        const dz = vertices[i].z - vertices[j].z;
+        const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+        // Connect nearby vertices in icosahedron
+        if (Math.abs(dist - 2 * scale) < 10) {
+          edges.push([i, j]);
+        }
+      }
+    }
+
+    // Outer orbital particle constellation
+    interface Particle {
+      x: number;
+      y: number;
+      z: number;
+      vx: number;
+      vy: number;
+      vz: number;
+      size: number;
+      pulse: number;
+    }
+
+    const particles: Particle[] = [];
+    for (let p = 0; p < 85; p++) {
+      const theta = Math.random() * Math.PI * 2;
+      const u = Math.random() * 2 - 1;
+      const r = 180 + Math.random() * 60;
+      particles.push({
+        x: r * Math.sqrt(1 - u * u) * Math.cos(theta),
+        y: r * Math.sqrt(1 - u * u) * Math.sin(theta),
+        z: r * u,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
+        vz: (Math.random() - 0.5) * 0.4,
+        size: Math.random() * 1.6 + 1.2,
+        pulse: Math.random() * Math.PI * 2,
+      });
+    }
+
+    // Rotation & Interaction State
+    let angleX = 0.4;
+    let angleY = 0.5;
+    let velX = 0.004;
+    let velY = 0.006;
+    let isDragging = false;
+    let prevMouseX = 0;
+    let prevMouseY = 0;
+
+    const viewport = canvas.parentElement;
+    if (viewport) {
+      viewport.addEventListener("mousedown", (e) => {
+        isDragging = true;
+        prevMouseX = e.clientX;
+        prevMouseY = e.clientY;
+      });
+
+      window.addEventListener("mouseup", () => {
+        isDragging = false;
+      });
+
+      window.addEventListener("mousemove", (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const normX = ((e.clientX - rect.left) / rect.width).toFixed(2);
+        const normY = ((e.clientY - rect.top) / rect.height).toFixed(2);
+
+        if (coordsEl) {
+          coordsEl.textContent = `[${normX}, ${normY}]`;
+        }
+
+        if (isDragging) {
+          const dx = e.clientX - prevMouseX;
+          const dy = e.clientY - prevMouseY;
+          velY = dx * 0.005;
+          velX = -dy * 0.005;
+          angleY += velY;
+          angleX += velX;
+          prevMouseX = e.clientX;
+          prevMouseY = e.clientY;
+        }
+      });
+    }
+
+    // FPS Meter Variables
+    let lastTime = performance.now();
+    let frameCount = 0;
+    let fpsTimer = 0;
+
+    function render(now: number) {
+      const dt = now - lastTime;
+      lastTime = now;
+
+      frameCount++;
+      fpsTimer += dt;
+      if (fpsTimer >= 500) {
+        const fps = ((frameCount / fpsTimer) * 1000).toFixed(1);
+        const frameMs = (fpsTimer / frameCount).toFixed(1);
+        if (fpsEl) fpsEl.textContent = `${fps} FPS`;
+        if (msEl) msEl.textContent = `${frameMs}ms`;
+        frameCount = 0;
+        fpsTimer = 0;
+      }
+
+      if (!isDragging) {
+        velX *= 0.98;
+        velY *= 0.98;
+        angleX += 0.003 + velX;
+        angleY += 0.005 + velY;
+      }
+
+      ctx.clearRect(0, 0, width, height);
+
+      // Precalculate Trig
+      const cosX = Math.cos(angleX);
+      const sinX = Math.sin(angleX);
+      const cosY = Math.cos(angleY);
+      const sinY = Math.sin(angleY);
+
+      // Project function
+      function project(x: number, y: number, z: number) {
+        // Rotate around Y
+        const x1 = x * cosY + z * sinY;
+        const z1 = -x * sinY + z * cosY;
+
+        // Rotate around X
+        const y2 = y * cosX - z1 * sinX;
+        const z2 = y * sinX + z1 * cosX;
+
+        const fov = 420;
+        const scaleFact = fov / (fov + z2);
+        return {
+          px: cx + x1 * scaleFact,
+          py: cy + y2 * scaleFact,
+          pz: z2,
+          scale: scaleFact,
+        };
+      }
+
+      // Draw Mode Logic
+      if (currentMode === "tesseract" || currentMode === "topology") {
+        // Project core vertices
+        const projected = vertices.map((v) => project(v.x, v.y, v.z));
+
+        // Draw outer concentric orbit ring
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.04)";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(cx, cy, 210, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Draw Wireframe Edges
+        ctx.lineWidth = 1.2;
+        for (const [i, j] of edges) {
+          const p1 = projected[i];
+          const p2 = projected[j];
+          const avgZ = (p1.pz + p2.pz) / 2;
+          const alpha = Math.max(0.12, (avgZ + 200) / 400);
+
+          ctx.strokeStyle = `rgba(255, 255, 255, ${alpha * 0.75})`;
+          ctx.beginPath();
+          ctx.moveTo(p1.px, p1.py);
+          ctx.lineTo(p2.px, p2.py);
+          ctx.stroke();
+        }
+
+        // Draw Vertices
+        for (const p of projected) {
+          const alpha = Math.max(0.2, (p.pz + 200) / 400);
+          ctx.beginPath();
+          ctx.arc(p.px, p.py, 3.5 * p.scale, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+          ctx.fill();
+
+          // Accent ring around front vertices
+          if (p.pz > 40) {
+            ctx.strokeStyle = "rgba(239, 68, 68, 0.8)";
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.arc(p.px, p.py, 6 * p.scale, 0, Math.PI * 2);
+            ctx.stroke();
+          }
+        }
+      }
+
+      if (currentMode === "particles" || currentMode === "topology") {
+        // Draw Particles
+        for (const pt of particles) {
+          pt.x += pt.vx;
+          pt.y += pt.vy;
+          pt.z += pt.vz;
+          pt.pulse += 0.04;
+
+          const proj = project(pt.x, pt.y, pt.z);
+          const alpha = Math.max(0.1, (proj.pz + 240) / 480);
+
+          ctx.beginPath();
+          ctx.arc(proj.px, proj.py, pt.size * proj.scale, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.85})`;
+          ctx.fill();
+
+          // Connect nearby particles in topology mode
+          if (currentMode === "topology") {
+            for (const other of particles) {
+              const dx = pt.x - other.x;
+              const dy = pt.y - other.y;
+              const dz = pt.z - other.z;
+              const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+              if (dist < 45 && dist > 0) {
+                const op = project(other.x, other.y, other.z);
+                ctx.strokeStyle = `rgba(255, 255, 255, ${(1 - dist / 45) * 0.25})`;
+                ctx.lineWidth = 0.8;
+                ctx.beginPath();
+                ctx.moveTo(proj.px, proj.py);
+                ctx.lineTo(op.px, op.py);
+                ctx.stroke();
+              }
+            }
+          }
+        }
+      }
+
+      requestAnimationFrame(render);
+    }
+
+    requestAnimationFrame(render);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initEngine);
+  } else {
+    initEngine();
+  }
+</script>
+

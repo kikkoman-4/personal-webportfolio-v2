@@ -1,0 +1,251 @@
+---
+// Hero.astro - 3D Wireframe Engine with Live FPS & Interactive Polyhedron
+import WireframeEngine from "@components/WireframeEngine.astro";
+
+const techStack = [
+  "React",
+  "TypeScript",
+  "Next.js",
+  "Tailwind CSS",
+  "FastAPI",
+  "Supabase",
+  "Docker",
+  "HTML5 Canvas",
+];
+---
+
+<section id="home" class="hero-section">
+  <div class="hero-container">
+    <!-- Left Column: Copy & Actions -->
+    <div class="hero-content">
+      <div class="hero-badge mono-hud">
+        <span class="status-dot"></span>
+        <span>FULL-STACK SOFTWARE ENGINEER // BGC, TAGUIG</span>
+      </div>
+
+      <h1 class="hero-headline">
+        Architecting resilient web systems &amp; interactive engines<span class="accent-period">.</span>
+      </h1>
+
+      <p class="hero-bio">
+        Hi, I'm <strong class="name-highlight">AA Kikz Afable</strong>. Computer Science graduate specializing in modern full-stack web applications, zero-dependency 60 FPS canvas engines, and scalable backend architectures.
+      </p>
+
+      <!-- Action Buttons -->
+      <div class="hero-actions">
+        <a href="#projects" class="btn-pill-primary">
+          <span class="btn-dot" aria-hidden="true">•</span>
+          <span>Explore Works</span>
+          <span class="btn-arrow" aria-hidden="true">↗</span>
+        </a>
+
+        <a href="#contact" class="btn-pill-secondary">
+          <span>Direct Transmission</span>
+          <span class="btn-arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+
+      <!-- Tech Stack Badges -->
+      <div class="tech-pills-row" aria-label="Core Tech Stack">
+        {
+          techStack.map((tech) => (
+            <span class="tech-badge mono-hud">
+              <span class="hash-sym">#</span> {tech}
+            </span>
+          ))
+        }
+      </div>
+    </div>
+
+    <!-- Right Column: Interactive 3D Wireframe Engine Core -->
+    <div class="hero-visual">
+      <WireframeEngine />
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero-section {
+    width: 100%;
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 3.5rem 1.5rem 4.5rem;
+    position: relative;
+    z-index: 10;
+  }
+
+  .hero-container {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    align-items: center;
+    gap: 3.5rem;
+  }
+
+  /* Left Column */
+  .hero-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-text-sub);
+    font-size: 0.72rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .hero-headline {
+    font-size: clamp(2.3rem, 4vw, 3.6rem);
+    font-weight: 800;
+    line-height: 1.12;
+    letter-spacing: -0.035em;
+    color: #ffffff;
+    margin-bottom: 1.5rem;
+  }
+
+  .accent-period {
+    color: var(--color-accent-red);
+    display: inline-block;
+  }
+
+  .hero-bio {
+    font-size: 1.05rem;
+    line-height: 1.68;
+    color: var(--color-text-muted);
+    max-width: 540px;
+    margin-bottom: 2.25rem;
+  }
+
+  .name-highlight {
+    color: #ffffff;
+    font-weight: 600;
+  }
+
+  /* Actions */
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2.25rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-pill-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.72rem 1.5rem;
+    background-color: #ffffff;
+    color: #000000;
+    border-radius: var(--radius-pill);
+    font-weight: 600;
+    font-size: 0.92rem;
+    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.18);
+    transition: all var(--transition-fast);
+  }
+
+  .btn-pill-primary:hover {
+    background-color: #e4e4e7;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 255, 255, 0.28);
+  }
+
+  .btn-dot {
+    color: var(--color-accent-red);
+    font-size: 1.1rem;
+    line-height: 0;
+  }
+
+  .btn-pill-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.72rem 1.5rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--color-border-pill);
+    color: var(--color-text-main);
+    border-radius: var(--radius-pill);
+    font-size: 0.92rem;
+    backdrop-filter: blur(10px);
+    transition: all var(--transition-fast);
+  }
+
+  .btn-pill-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.35);
+    transform: translateY(-2px);
+  }
+
+  .btn-arrow {
+    font-family: var(--font-mono);
+    transition: transform var(--transition-fast);
+  }
+
+  .btn-pill-primary:hover .btn-arrow {
+    transform: translate(2px, -2px);
+  }
+
+  .btn-pill-secondary:hover .btn-arrow {
+    transform: translateX(3px);
+  }
+
+  /* Tech Stack Badges */
+  .tech-pills-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .tech-badge {
+    padding: 0.32rem 0.75rem;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--color-border-subtle);
+    background: rgba(255, 255, 255, 0.02);
+    font-size: 0.72rem;
+    color: var(--color-text-sub);
+    letter-spacing: 0.04em;
+    transition: all var(--transition-fast);
+  }
+
+  .tech-badge:hover {
+    color: #ffffff;
+    border-color: var(--color-border-hover);
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .hash-sym {
+    color: var(--color-text-hud);
+  }
+
+  /* Right Column */
+  .hero-visual {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  @media (max-width: 1040px) {
+    .hero-container {
+      grid-template-columns: 1fr;
+      gap: 3rem;
+    }
+
+    .hero-content {
+      align-items: center;
+      text-align: center;
+    }
+
+    .hero-bio {
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero-actions, .tech-pills-row {
+      justify-content: center;
+    }
+  }
+</style>

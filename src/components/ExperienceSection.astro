@@ -1,0 +1,265 @@
+---
+// ExperienceSection.astro - Cybernetic timeline of professional experience & leadership
+interface ExperienceItem {
+  role: string;
+  company: string;
+  period: string;
+  highlights: string[];
+  badge?: string;
+}
+
+const experiences: ExperienceItem[] = [
+  {
+    role: "Full-Stack Developer",
+    company: "HildrStudios",
+    period: "Nov 2025 — Aug 2026",
+    badge: "Web Engineering",
+    highlights: [
+      "Engineered and deployed main digital storefront using React and Tailwind CSS, increasing monthly inbound client inquiries by 40%.",
+      "Collaborated in an Agile cross-functional team to refine user submission workflows and React interface performance.",
+      "Automated CI/CD deployment pipelines using GitHub Actions, maintaining 99.9% uptime and zero-downtime releases.",
+    ],
+  },
+  {
+    role: "Game Developer Intern",
+    company: "Pawzled Digital Studio",
+    period: "Feb 2026 — Jun 2026",
+    badge: "Interactive & Performance",
+    highlights: [
+      "Re-engineered legacy browser game into a cross-platform mobile app using C# and Unity, achieving stable 60 FPS performance.",
+      "Programmed modular physics interactions and boss encounter state machines, reducing gameplay bugs by optimizing memory management.",
+    ],
+  },
+  {
+    role: "Full-Stack Web Developer",
+    company: "Barangay Cotta LGU",
+    period: "Sept 2020 — Mar 2022",
+    badge: "Civic Architecture",
+    highlights: [
+      "Architected centralized civic service portal with role-based access control (RBAC), appointment scheduling, and automated document issuance.",
+      "Built Python automated document generation pipeline containerized with Docker, processing 200+ weekly requests with 0% downtime and reducing manual time by ~70%.",
+    ],
+  },
+  {
+    role: "President & Organization Lead",
+    company: "Shiba Re-Ignite Organization (STI College)",
+    period: "Oct 2024 — Present",
+    badge: "Leadership & Community",
+    highlights: [
+      "Lead technical community initiatives, organize esports tournaments, and coordinate IT workshops and student cloud certifications.",
+      "Previously served as Vice-President (2023–2024) and Secretary (2022–2023).",
+    ],
+  },
+];
+---
+
+<section id="experience" class="experience-section">
+  <div class="section-container">
+    <div class="section-header">
+      <div class="header-left">
+        <span class="section-tag mono-hud">
+          <span class="hud-slash">//</span> 03. EXPERIENCE &amp; LEADERSHIP
+        </span>
+        <h2 class="section-title">Verified track record.</h2>
+      </div>
+      <div class="header-right">
+        <span class="mono-hud status-avail">
+          <span class="status-dot"></span> OPEN FOR CONTRACT &amp; FULL-TIME
+        </span>
+      </div>
+    </div>
+
+    <!-- Timeline List -->
+    <div class="timeline-list">
+      {
+        experiences.map((exp, idx) => (
+          <div class="timeline-item">
+            <div class="timeline-col-meta mono-hud">
+              <span class="exp-period">{exp.period}</span>
+              <span class="exp-badge">{exp.badge}</span>
+            </div>
+
+            <div class="timeline-col-content glass-panel">
+              <div class="content-header">
+                <div>
+                  <h3 class="exp-role">{exp.role}</h3>
+                  <div class="exp-company mono-hud">@ {exp.company}</div>
+                </div>
+                <span class="step-num mono-hud">LOG #{idx + 1}</span>
+              </div>
+
+              <ul class="exp-bullets">
+                {exp.highlights.map((bullet) => (
+                  <li>
+                    <span class="bullet-arrow" aria-hidden="true">&gt;</span>
+                    <span>{bullet}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .experience-section {
+    width: 100%;
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 4.5rem 1.5rem;
+    position: relative;
+    z-index: 10;
+  }
+
+  .section-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--color-border);
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .section-tag {
+    color: var(--color-text-muted);
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .hud-slash {
+    color: var(--color-accent-red);
+  }
+
+  .section-title {
+    font-size: clamp(1.8rem, 3.2vw, 2.4rem);
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+  }
+
+  .status-avail {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-accent-green);
+  }
+
+  /* Timeline */
+  .timeline-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .timeline-item {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 2rem;
+    align-items: flex-start;
+  }
+
+  .timeline-col-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-top: 0.75rem;
+  }
+
+  .exp-period {
+    color: #ffffff;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+  }
+
+  .exp-badge {
+    color: var(--color-text-hud);
+    font-size: 0.7rem;
+  }
+
+  .timeline-col-content {
+    padding: 1.75rem;
+    background: rgba(12, 14, 18, 0.7);
+    border: 1px solid var(--color-border);
+    transition: all var(--transition-normal);
+  }
+
+  .timeline-col-content:hover {
+    border-color: var(--color-border-hover);
+    background: rgba(16, 18, 24, 0.85);
+  }
+
+  .content-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--color-border-subtle);
+    margin-bottom: 1.15rem;
+    gap: 1rem;
+  }
+
+  .exp-role {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #ffffff;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.25rem;
+  }
+
+  .exp-company {
+    color: var(--color-text-muted);
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+  }
+
+  .step-num {
+    color: var(--color-text-hud);
+    font-size: 0.72rem;
+  }
+
+  .exp-bullets {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .exp-bullets li {
+    display: grid;
+    grid-template-columns: 14px 1fr;
+    gap: 0.5rem;
+    font-size: 0.92rem;
+    color: var(--color-text-muted);
+    line-height: 1.6;
+  }
+
+  .bullet-arrow {
+    font-family: var(--font-mono);
+    color: var(--color-accent-green);
+    font-size: 0.85rem;
+  }
+
+  @media (max-width: 840px) {
+    .timeline-item {
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+    .timeline-col-meta {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 0;
+    }
+  }
+</style>
+

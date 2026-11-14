@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CSS Reset & Base Global Styles
+   CSS Reset & Base Global Styles - Cyber Minimalist Aesthetic
    ========================================================================== */
 
 *, *::before, *::after {
@@ -12,10 +12,11 @@ html {
   font-family: var(--font-sans);
   background-color: var(--color-bg);
   color: var(--color-text-main);
-  line-height: 1.6;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   scroll-behavior: smooth;
+  color-scheme: dark;
 }
 
 body {
@@ -23,20 +24,44 @@ body {
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
-  background-image: 
-    radial-gradient(circle at 15% 20%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
-    radial-gradient(circle at 85% 80%, rgba(6, 182, 212, 0.06) 0%, transparent 45%);
-  background-attachment: fixed;
+  background-color: var(--color-bg);
+  background-image:
+    radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.02) 0%, transparent 60%),
+    radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 100% 100%, 32px 32px;
+  background-position: 0 0, 0 0;
+  position: relative;
+}
+
+/* Custom Text Selection */
+::selection {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #27272a;
+  border-radius: var(--radius-pill);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3f3f46;
 }
 
 a {
   color: inherit;
   text-decoration: none;
-  transition: color var(--transition-fast);
-}
-
-a:hover {
-  color: var(--color-accent);
+  transition: all var(--transition-fast);
 }
 
 img, svg, picture, video {
@@ -46,6 +71,61 @@ img, svg, picture, video {
 
 button, input, textarea, select {
   font: inherit;
+  background: none;
+  border: none;
+  color: inherit;
+}
+
+/* Technical Monospace Micro-Labels */
+.mono-hud {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+/* Pulsing Status Dot */
+.status-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--color-accent-green);
+  box-shadow: 0 0 8px var(--color-accent-green-glow);
+  animation: pulse-live 2.2s infinite ease-in-out;
+}
+
+.status-dot.red {
+  background-color: var(--color-accent-red);
+  box-shadow: 0 0 8px var(--color-accent-red-glow);
+  animation: pulse-red 2.4s infinite ease-in-out;
+}
+
+@keyframes pulse-live {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 8px var(--color-accent-green-glow);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(0.85);
+    box-shadow: 0 0 2px var(--color-accent-green-glow);
+  }
+}
+
+@keyframes pulse-red {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 8px var(--color-accent-red-glow);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.85);
+    box-shadow: 0 0 2px var(--color-accent-red-glow);
+  }
 }
 
 /* Glassmorphism Card Utility */
@@ -55,10 +135,5 @@ button, input, textarea, select {
   -webkit-backdrop-filter: var(--backdrop-blur);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
-  transition: border-color var(--transition-normal), box-shadow var(--transition-normal), transform var(--transition-normal);
-}
-
-.glass-panel:hover {
-  border-color: var(--color-border-hover);
-  box-shadow: var(--shadow-glow);
+  box-shadow: var(--shadow-hud);
 }

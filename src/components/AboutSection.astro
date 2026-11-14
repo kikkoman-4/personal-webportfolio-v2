@@ -1,0 +1,414 @@
+---
+// AboutSection.astro - Developer Dossier & Interactive Terminal CLI
+import InteractiveTerminal from "@components/InteractiveTerminal.astro";
+
+const verifiedMetrics = [
+  { value: "+40%", label: "INBOUND CLIENT LEADS", sub: "HildrStudios Main Storefront" },
+  { value: "60+ FPS", label: "ZERO-DEPENDENCY ENGINE", sub: "Olympus Dash Arcade Jam" },
+  { value: "200+", label: "WEEKLY CIVIC REQUESTS", sub: "LGU Central Portal" },
+  { value: "0%", label: "SYSTEM DOWNTIME", sub: "Dockerized Python Architecture" },
+];
+
+const credentials = [
+  { label: "DEGREE", val: "BS in Computer Science (Dean's Lister)" },
+  { label: "LEADERSHIP", val: "President @ Shiba Re-Ignite Org" },
+  { label: "SECURITY", val: "Google Network Security Certified" },
+  { label: "AI WORKFLOWS", val: "Google AI Specialization Certified" },
+];
+---
+
+<section id="about" class="about-section">
+  <div class="section-container">
+    <!-- Section Header -->
+    <div class="section-header">
+      <div class="header-left">
+        <span class="section-tag mono-hud">
+          <span class="hud-slash">//</span> 01. SYSTEM DOSSIER &amp; BIO
+        </span>
+        <h2 class="section-title">Engineering background &amp; philosophy.</h2>
+      </div>
+      <div class="header-right">
+        <span class="mono-hud status-online">
+          <span class="status-dot"></span> DOSSIER VERIFIED // LEVEL_01
+        </span>
+      </div>
+    </div>
+
+    <!-- Bento Grid Structure for About Me -->
+    <div class="about-bento">
+      <!-- Row 1: Narrative Philosophy + Live Station Telemetry -->
+      <div class="bento-row two-cols">
+        <!-- Card 1: Bio & Approach -->
+        <div class="bento-card card-narrative glass-panel">
+          <div class="card-bar mono-hud">
+            <span class="id-badge">OPERATIVE: AA KIKZ H. AFABLE</span>
+            <span class="sub-badge">BGC_STATION</span>
+          </div>
+
+          <h3 class="narrative-heading">
+            Bridging high-performance interfaces with resilient cloud architectures.
+          </h3>
+
+          <p class="narrative-p">
+            Computer Science graduate based in BGC, Taguig, specializing in full-stack development, AI workflows, and high-performance interactive architectures.
+          </p>
+
+          <p class="narrative-p">
+            Whether engineering client storefronts at <strong>HildrStudios</strong> that increased monthly inbound inquiries by 40%, or developing Dockerized Python automation pipelines processing 200+ weekly civic requests with 0% downtime, I build systems focused on speed, reliability, and measurable impact.
+          </p>
+
+          <!-- Verified Credentials Grid -->
+          <div class="creds-list mono-hud">
+            {
+              credentials.map((c) => (
+                <div class="cred-row">
+                  <span class="cred-k">{c.label}:</span>
+                  <span class="cred-v">{c.val}</span>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+
+        <!-- Card 2: Live Station Telemetry -->
+        <div class="bento-card card-telemetry glass-panel">
+          <div class="card-bar mono-hud">
+            <span>STATION_TELEMETRY</span>
+            <span class="text-green">[LIVE_FEED]</span>
+          </div>
+
+          <div class="time-widget">
+            <div class="time-display" id="about-clock">--:--:--</div>
+            <div class="tz-label mono-hud">PHT // UTC+8 • PHILIPPINE STANDARD TIME</div>
+          </div>
+
+          <div class="telemetry-rows mono-hud">
+            <div class="tele-row">
+              <span class="k">LOCATION:</span>
+              <span class="v">BGC, Taguig (14.55° N, 121.05° E)</span>
+            </div>
+            <div class="tele-row">
+              <span class="k">STATUS:</span>
+              <span class="v text-green">AVAILABLE FOR CONTRACT &amp; FULL-TIME</span>
+            </div>
+            <div class="tele-row">
+              <span class="k">PIPELINE:</span>
+              <span class="v">99.9% UPTIME // CI/CD AUTOMATION</span>
+            </div>
+            <div class="tele-row">
+              <span class="k">RESPONSE:</span>
+              <span class="v">&lt; 24 HOURS INQUIRY SLA</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 2: Interactive Terminal CLI + Verified Metrics Stack -->
+      <div class="bento-row cli-metrics-row">
+        <!-- Card 3: Interactive Developer CLI -->
+        <div class="bento-card card-cli-wrap">
+          <InteractiveTerminal />
+        </div>
+
+        <!-- Card 4: Verified Performance Benchmarks -->
+        <div class="bento-card card-benchmarks glass-panel">
+          <div class="card-bar mono-hud">
+            <span>VERIFIED_BENCHMARKS</span>
+            <span class="text-hud">// LOGGED</span>
+          </div>
+
+          <div class="benchmarks-stack">
+            {
+              verifiedMetrics.map((m) => (
+                <div class="benchmark-item">
+                  <div class="bench-val">{m.value}</div>
+                  <div class="bench-label mono-hud">{m.label}</div>
+                  <div class="bench-sub">{m.sub}</div>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about-section {
+    width: 100%;
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 4.5rem 1.5rem;
+    position: relative;
+    z-index: 10;
+  }
+
+  .section-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--color-border);
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .section-tag {
+    color: var(--color-text-muted);
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .hud-slash {
+    color: var(--color-accent-red);
+  }
+
+  .section-title {
+    font-size: clamp(1.8rem, 3.2vw, 2.4rem);
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+  }
+
+  .status-online {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-text-sub);
+  }
+
+  /* Bento Layout */
+  .about-bento {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .bento-row {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .bento-row.two-cols {
+    grid-template-columns: 1.25fr 1fr;
+  }
+
+  .bento-row.cli-metrics-row {
+    grid-template-columns: 1.35fr 1fr;
+  }
+
+  .bento-card {
+    padding: 1.75rem;
+    background: rgba(10, 12, 16, 0.75);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-normal);
+  }
+
+  .bento-card:hover {
+    border-color: var(--color-border-hover);
+  }
+
+  .card-cli-wrap {
+    padding: 0;
+    background: transparent;
+    border: none;
+  }
+
+  .card-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    color: var(--color-text-muted);
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid var(--color-border-subtle);
+    margin-bottom: 1.25rem;
+  }
+
+  .id-badge {
+    color: var(--color-text-sub);
+  }
+
+  .sub-badge {
+    color: var(--color-text-hud);
+  }
+
+  /* Narrative */
+  .narrative-heading {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.35;
+    margin-bottom: 1rem;
+    letter-spacing: -0.015em;
+  }
+
+  .narrative-p {
+    font-size: 0.95rem;
+    color: var(--color-text-muted);
+    line-height: 1.65;
+    margin-bottom: 0.85rem;
+  }
+
+  .narrative-p strong {
+    color: #ffffff;
+    font-weight: 600;
+  }
+
+  /* Credentials */
+  .creds-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    padding: 0.85rem 1rem;
+    margin-top: 1rem;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-sm);
+    font-size: 0.72rem;
+  }
+
+  .cred-row {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 0.4rem;
+  }
+
+  .cred-k {
+    color: var(--color-text-hud);
+  }
+
+  .cred-v {
+    color: var(--color-text-sub);
+  }
+
+  /* Telemetry */
+  .time-widget {
+    margin-bottom: 1.5rem;
+  }
+
+  .time-display {
+    font-family: var(--font-mono);
+    font-size: 2.7rem;
+    font-weight: 800;
+    color: #ffffff;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  .tz-label {
+    color: var(--color-text-hud);
+    font-size: 0.72rem;
+    margin-top: 0.45rem;
+  }
+
+  .telemetry-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    font-size: 0.72rem;
+  }
+
+  .tele-row {
+    display: grid;
+    grid-template-columns: 85px 1fr;
+    gap: 0.5rem;
+  }
+
+  .tele-row .k {
+    color: var(--color-text-muted);
+  }
+
+  .tele-row .v {
+    color: var(--color-text-sub);
+  }
+
+  .text-green {
+    color: var(--color-accent-green);
+  }
+
+  .text-hud {
+    color: var(--color-text-hud);
+  }
+
+  /* Benchmarks */
+  .benchmarks-stack {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+  }
+
+  .benchmark-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .bench-val {
+    font-family: var(--font-mono);
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1;
+  }
+
+  .bench-label {
+    font-size: 0.68rem;
+    color: var(--color-accent-green);
+    letter-spacing: 0.08em;
+  }
+
+  .bench-sub {
+    font-size: 0.74rem;
+    color: var(--color-text-muted);
+    line-height: 1.4;
+  }
+
+  @media (max-width: 980px) {
+    .bento-row.two-cols,
+    .bento-row.cli-metrics-row {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .bento-card {
+      padding: 1.25rem;
+    }
+    .benchmarks-stack {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    .cred-row {
+      grid-template-columns: 1fr;
+      gap: 0.15rem;
+    }
+  }
+</style>
+
+<script>
+  function updateAboutClock() {
+    const el = document.getElementById("about-clock");
+    if (!el) return;
+    const now = new Date();
+    const formatter = new Intl.DateTimeFormat("en-GB", {
+      timeZone: "Asia/Manila",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+    });
+    el.textContent = formatter.format(now);
+  }
+
+  updateAboutClock();
+  setInterval(updateAboutClock, 1000);
+</script>

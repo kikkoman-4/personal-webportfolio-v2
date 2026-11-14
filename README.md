@@ -25,11 +25,12 @@ personal-webportfolio-v2/
 │   ├── components/         # Reusable UI components
 │   ├── layouts/            # Page layouts (BaseLayout.astro)
 │   ├── pages/              # Astro routing (index.astro)
+│   ├── scripts/            # Client scripts & utilities (audio.ts)
 │   └── styles/             # Global CSS & Design tokens
 │       ├── variables.css   # Color palette, spacing, typography tokens
 │       └── global.css      # CSS reset, base tags, utility classes
 ├── astro.config.mjs        # Astro configuration
-├── tsconfig.json           # TypeScript config with path aliases (@/*, @styles/*, etc.)
+├── tsconfig.json           # TypeScript config with path aliases (@components/*, @scripts/*, etc.)
 └── package.json
 ```
 

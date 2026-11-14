@@ -1,0 +1,120 @@
+---
+// HudFrame.astro - Cybernetic telemetry frame and corner crosshairs
+---
+
+<div class="hud-frame" aria-hidden="true">
+  <!-- Corner Crosshairs -->
+  <div class="crosshair top-left">+</div>
+  <div class="crosshair top-right">+</div>
+  <div class="crosshair bottom-left">+</div>
+  <div class="crosshair bottom-right">+</div>
+
+  <!-- Perimeter Markers -->
+  <div class="hud-marker marker-left-ticks">
+    <span></span><span></span><span></span>
+  </div>
+  <div class="hud-marker marker-right-stat">
+    <span class="red-pip"></span>
+    <span class="pct-readout">00%</span>
+  </div>
+</div>
+
+<style>
+  .hud-frame {
+    position: fixed;
+    top: var(--hud-inset);
+    bottom: var(--hud-inset);
+    left: var(--hud-inset);
+    right: var(--hud-inset);
+    pointer-events: none;
+    z-index: 40;
+    border: 1px solid var(--color-border-subtle);
+  }
+
+  .crosshair {
+    position: absolute;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--color-text-hud);
+    line-height: 1;
+    user-select: none;
+    opacity: 0.6;
+  }
+
+  .crosshair.top-left {
+    top: -6px;
+    left: -5px;
+  }
+
+  .crosshair.top-right {
+    top: -6px;
+    right: -5px;
+  }
+
+  .crosshair.bottom-left {
+    bottom: -6px;
+    left: -5px;
+  }
+
+  .crosshair.bottom-right {
+    bottom: -6px;
+    right: -5px;
+  }
+
+  /* Right edge indicators */
+  .marker-right-stat {
+    position: absolute;
+    right: -8px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .red-pip {
+    display: block;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background-color: var(--color-accent-red);
+    box-shadow: 0 0 6px var(--color-accent-red-glow);
+  }
+
+  .pct-readout {
+    writing-mode: vertical-lr;
+    transform: rotate(180deg);
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--color-text-hud);
+    letter-spacing: 0.15em;
+  }
+
+  .marker-left-ticks {
+    position: absolute;
+    left: -3px;
+    top: 35%;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .marker-left-ticks span {
+    display: block;
+    width: 6px;
+    height: 1px;
+    background-color: var(--color-text-hud);
+    opacity: 0.4;
+  }
+
+  @media (max-width: 768px) {
+    .hud-frame {
+      top: 8px;
+      bottom: 8px;
+      left: 8px;
+      right: 8px;
+    }
+  }
+</style>
+

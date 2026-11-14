@@ -1,112 +1,71 @@
 ---
-import BaseLayout from '@layouts/BaseLayout.astro';
+import BaseLayout from "@layouts/BaseLayout.astro";
+import HudFrame from "@components/HudFrame.astro";
+import Navbar from "@components/Navbar.astro";
+import Hero from "@components/Hero.astro";
+import AboutSection from "@components/AboutSection.astro";
+import ProjectsSection from "@components/ProjectsSection.astro";
+import ExperienceSection from "@components/ExperienceSection.astro";
+import SkillsSection from "@components/SkillsSection.astro";
+import Footer from "@components/Footer.astro";
 ---
 
-<BaseLayout title="Portfolio | Creative Developer">
-  <main class="container">
-    <div class="hero glass-panel">
-      <span class="badge">Portfolio v2</span>
-      <h1 class="title">Engineering Modern Web Experiences</h1>
-      <p class="subtitle">
-        Welcome to the refreshed portfolio. Clean architecture, high-performance styling, and scalable design tokens are configured and ready.
-      </p>
-      <div class="actions">
-        <a href="#projects" class="btn btn-primary">Explore Work</a>
-        <a href="#contact" class="btn btn-secondary">Get In Touch</a>
-      </div>
-    </div>
-  </main>
+<BaseLayout
+  title="AA KIKZ AFABLE | Full-Stack Developer & Software Engineer"
+  description="Full-Stack Developer based in BGC, Taguig, Philippines specializing in modern web applications, 60 FPS Canvas engines, and AI workflows."
+>
+  <!-- Cybernetic HUD Framing -->
+  <HudFrame />
+
+  <div class="page-wrapper">
+    <!-- Navigation Bar -->
+    <Navbar
+      brandName="KIKZ AFABLE"
+      role="FULL-STACK & CREATIVE SOFTWARE ENGINEER"
+      location="BGC, PHILIPPINES"
+    />
+
+    <main id="main-content">
+      <!-- 00. Hero Landing Page -->
+      <Hero />
+
+      <!-- 01. About Me (Dossier & Interactive Terminal) -->
+      <AboutSection />
+
+      <!-- 02. Selected Works -->
+      <ProjectsSection />
+
+      <!-- 03. Experience & Leadership -->
+      <ExperienceSection />
+
+      <!-- 04. Technical Arsenal -->
+      <SkillsSection />
+    </main>
+
+    <!-- 05. Direct Contact & Footer Telemetry -->
+    <Footer
+      brand="KIKZ AFABLE"
+      year="2026"
+      location="PHILIPPINES  UTC+8"
+      email="kikzafable@gmail.com"
+      github="https://github.com/Kikkoman-4"
+    />
+  </div>
 </BaseLayout>
 
 <style>
-  .container {
+  .page-wrapper {
+    position: relative;
     width: 100%;
-    max-width: var(--max-width);
-    margin: 0 auto;
-    padding: var(--space-3xl) var(--space-lg);
+    min-height: 100vh;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 80vh;
+    flex-direction: column;
+    z-index: 10;
   }
 
-  .hero {
-    padding: var(--space-3xl) var(--space-2xl);
-    text-align: center;
-    max-width: 720px;
-  }
-
-  .badge {
-    display: inline-block;
-    padding: var(--space-xs) var(--space-md);
-    background: rgba(99, 102, 241, 0.15);
-    color: #818cf8;
-    border: 1px solid rgba(99, 102, 241, 0.3);
-    border-radius: var(--radius-full);
-    font-size: 0.85rem;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    margin-bottom: var(--space-md);
-  }
-
-  .title {
-    font-size: clamp(2.2rem, 5vw, 3.4rem);
-    font-weight: 800;
-    line-height: 1.15;
-    background: linear-gradient(135deg, #ffffff 30%, #9ca3af 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: var(--space-md);
-  }
-
-  .subtitle {
-    font-size: 1.15rem;
-    color: var(--color-text-muted);
-    line-height: 1.7;
-    margin-bottom: var(--space-xl);
-  }
-
-  .actions {
+  main {
+    flex: 1;
     display: flex;
-    gap: var(--space-md);
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.75rem 1.5rem;
-    border-radius: var(--radius-sm);
-    font-weight: 600;
-    font-size: 0.95rem;
-    transition: all var(--transition-fast);
-  }
-
-  .btn-primary {
-    background: var(--color-accent);
-    color: #ffffff;
-    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
-  }
-
-  .btn-primary:hover {
-    background: var(--color-accent-hover);
-    color: #ffffff;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
-  }
-
-  .btn-secondary {
-    background: rgba(255, 255, 255, 0.05);
-    color: var(--color-text-main);
-    border: 1px solid var(--color-border);
-  }
-
-  .btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: var(--color-border-hover);
-    transform: translateY(-2px);
+    flex-direction: column;
   }
 </style>

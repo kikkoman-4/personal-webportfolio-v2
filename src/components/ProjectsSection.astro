@@ -1,0 +1,306 @@
+---
+// ProjectsSection.astro - High-contrast cyber-minimalist project showcase
+interface Project {
+  title: string;
+  category: string;
+  year: string;
+  description: string;
+  tags: string[];
+  link?: string;
+  metrics?: string;
+}
+
+const projects: Project[] = [
+  {
+    title: "Wine Century Brothers Inc.",
+    category: "Lead Web Developer",
+    year: "2026",
+    description:
+      "Engineered an end-to-end web application using React and Next.js tailored for luxury product exploration, fast catalog filtering, and high-converting inbound sales lead generation.",
+    tags: ["React", "Next.js", "Tailwind CSS", "TypeScript", "Vercel"],
+    metrics: "40% Boost in Lead Generation",
+    link: "https://kikzafable.vercel.app",
+  },
+  {
+    title: "Olympus Dash Chaos Arena",
+    category: "Game & Creative Engineering",
+    year: "2026",
+    description:
+      "Architected and deployed a 2D survival arcade game within 24-hour flash jam constraints. Sustained 60+ FPS using zero-dependency HTML5 Canvas, procedural Web Audio synthesis, and responsive viewport scaling.",
+    tags: ["HTML5 Canvas", "Web Audio API", "TypeScript", "@remix-gg/sdk"],
+    metrics: "60+ FPS Zero-Dependency Canvas",
+    link: "https://github.com/Kikkoman-4",
+  },
+  {
+    title: "Civic Service LGU Portal",
+    category: "Full-Stack Web Developer",
+    year: "2022",
+    description:
+      "Centralized civic portal featuring role-based access control (RBAC), appointment scheduling, and automated Python document issuance pipeline containerized via Docker.",
+    tags: ["Python", "Docker", "FastAPI", "PostgreSQL", "RBAC"],
+    metrics: "200+ Weekly Requests • -70% Manual Time",
+    link: "https://github.com/Kikkoman-4",
+  },
+  {
+    title: "YGG Play Summit Matchmaking",
+    category: "Hackathon Team Lead",
+    year: "2025",
+    description:
+      "Led a team to develop a competitive bracket-based typing combat game featuring real-time WebSockets matchmaking and dynamic combat progression systems.",
+    tags: ["WebSockets", "React", "Node.js", "Competitive Combat"],
+    metrics: "Multiplayer Real-time Matchmaking",
+    link: "https://github.com/Kikkoman-4",
+  },
+  {
+    title: "Inventi Property Management",
+    category: "Hackathon Team Lead",
+    year: "2025",
+    description:
+      "Property management MVP for hotels and condominiums with automated maintenance dispatching, event-based dynamic pricing alerts, and revenue analytics.",
+    tags: ["Next.js", "Supabase", "Analytics", "Automation"],
+    metrics: "End-to-End Hotel Operations MVP",
+    link: "https://github.com/Kikkoman-4",
+  },
+];
+---
+
+<section id="projects" class="projects-section">
+  <div class="section-container">
+    <!-- Section Header -->
+    <div class="section-header">
+      <div class="header-left">
+        <span class="section-tag mono-hud">
+          <span class="hud-slash">//</span> 02. SELECTED WORKS
+        </span>
+        <h2 class="section-title">Engineered to perform.</h2>
+      </div>
+      <div class="header-right">
+        <span class="mono-hud project-count">TOTAL: {projects.length} PROJECTS</span>
+      </div>
+    </div>
+
+    <!-- Projects Grid -->
+    <div class="projects-grid">
+      {
+        projects.map((proj, idx) => (
+          <article class="project-card glass-panel">
+            <div class="card-top">
+              <div class="card-meta mono-hud">
+                <span class="proj-num">0{idx + 1}</span>
+                <span class="proj-category">{proj.category}</span>
+                <span class="proj-year">{proj.year}</span>
+              </div>
+              {proj.link && (
+                <a
+                  href={proj.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="project-ext-link"
+                  aria-label={`Visit ${proj.title}`}
+                >
+                  ↗
+                </a>
+              )}
+            </div>
+
+            <div class="card-body">
+              <h3 class="proj-title">{proj.title}</h3>
+              <p class="proj-desc">{proj.description}</p>
+            </div>
+
+            <div class="card-bottom">
+              {proj.metrics && (
+                <div class="metric-pill mono-hud">
+                  <span class="metric-dot" aria-hidden="true">•</span>
+                  <span>{proj.metrics}</span>
+                </div>
+              )}
+
+              <div class="proj-tags">
+                {proj.tags.map((tag) => (
+                  <span class="tag-chip">{tag}</span>
+                ))}
+              </div>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .projects-section {
+    width: 100%;
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 4.5rem 1.5rem;
+    position: relative;
+    z-index: 10;
+  }
+
+  .section-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--color-border);
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .section-tag {
+    color: var(--color-text-muted);
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .hud-slash {
+    color: var(--color-accent-red);
+  }
+
+  .section-title {
+    font-size: clamp(1.8rem, 3.2vw, 2.4rem);
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+  }
+
+  .project-count {
+    color: var(--color-text-hud);
+  }
+
+  /* Projects Grid */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .project-card {
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 280px;
+    background: rgba(12, 14, 18, 0.7);
+    border: 1px solid var(--color-border);
+    transition: all var(--transition-normal);
+  }
+
+  .project-card:hover {
+    border-color: var(--color-border-hover);
+    transform: translateY(-3px);
+    box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.75);
+    background: rgba(16, 18, 24, 0.85);
+  }
+
+  .card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+  }
+
+  .card-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--color-text-muted);
+    font-size: 0.72rem;
+  }
+
+  .proj-num {
+    color: var(--color-text-hud);
+  }
+
+  .proj-category {
+    color: var(--color-text-sub);
+  }
+
+  .project-ext-link {
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    color: var(--color-text-muted);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--color-border-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-fast);
+  }
+
+  .project-card:hover .project-ext-link {
+    color: #000000;
+    background: #ffffff;
+    border-color: #ffffff;
+    transform: rotate(45deg);
+  }
+
+  .proj-title {
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.01em;
+  }
+
+  .proj-desc {
+    font-size: 0.92rem;
+    line-height: 1.6;
+    color: var(--color-text-muted);
+    margin-bottom: 1.5rem;
+  }
+
+  .card-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--color-border-subtle);
+  }
+
+  .metric-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.73rem;
+    color: var(--color-accent-green);
+  }
+
+  .metric-dot {
+    font-size: 1rem;
+    line-height: 0;
+  }
+
+  .proj-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .tag-chip {
+    padding: 0.2rem 0.65rem;
+    border-radius: var(--radius-pill);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--color-border-subtle);
+    font-size: 0.72rem;
+    color: var(--color-text-sub);
+    font-family: var(--font-mono);
+  }
+
+  @media (max-width: 640px) {
+    .projects-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+

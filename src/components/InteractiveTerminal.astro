@@ -1,0 +1,351 @@
+---
+// InteractiveTerminal.astro - Interactive Developer Console tailored for the About Me dossier
+---
+
+<div class="terminal-container glass-panel" id="terminal-root" aria-label="Interactive Developer Console">
+  <!-- Terminal Bar -->
+  <div class="terminal-bar">
+    <div class="terminal-controls">
+      <span class="control-dot close"></span>
+      <span class="control-dot min"></span>
+      <span class="control-dot max"></span>
+    </div>
+
+    <div class="terminal-title mono-hud">
+      <span class="status-dot"></span>
+      <span>kikz@bgc-station:~/about-dossier (zsh)</span>
+    </div>
+
+    <div class="terminal-shortcut mono-hud">
+      <span>TYPE OR CLICK COMMANDS</span>
+    </div>
+  </div>
+
+  <!-- Quick Command Pills tailored for About Me -->
+  <div class="terminal-quick-cmds mono-hud">
+    <button type="button" class="cmd-pill active-pill" data-run="bio">bio</button>
+    <button type="button" class="cmd-pill" data-run="education">education</button>
+    <button type="button" class="cmd-pill" data-run="leadership">leadership</button>
+    <button type="button" class="cmd-pill" data-run="certs">certs</button>
+    <button type="button" class="cmd-pill" data-run="stack">stack</button>
+    <button type="button" class="cmd-pill" data-run="contact">contact</button>
+    <button type="button" class="cmd-pill clear-btn" data-run="clear">clear</button>
+  </div>
+
+  <!-- Terminal Output Screen -->
+  <div class="terminal-screen" id="terminal-screen" role="log" aria-live="polite">
+    <div class="term-line output-init">
+      <span class="text-white">AA KIKZ H. AFABLE // Developer Dossier v2.6.0</span><br />
+      <span class="text-muted">Interactive biography terminal. Click a pill above or type <span class="text-green">'help'</span> to explore.</span>
+    </div>
+  </div>
+
+  <!-- Terminal Input Row -->
+  <form id="terminal-form" class="terminal-input-row" autocomplete="off">
+    <label for="cli-input" class="prompt-sym mono-hud">kikz@dev:~$</label>
+    <input
+      type="text"
+      id="cli-input"
+      class="cli-input mono-hud"
+      placeholder="type 'bio', 'education', 'leadership', 'certs'..."
+      spellcheck="false"
+      autocapitalize="off"
+    />
+    <button type="submit" class="cli-submit-btn mono-hud" aria-label="Execute command">RUN ↵</button>
+  </form>
+</div>
+
+<style>
+  .terminal-container {
+    width: 100%;
+    background: rgba(8, 10, 14, 0.92);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    font-family: var(--font-mono);
+    box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.7);
+  }
+
+  .terminal-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.65rem 1rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-bottom: 1px solid var(--color-border-subtle);
+  }
+
+  .terminal-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .control-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .control-dot.close { background: #ef4444; opacity: 0.8; }
+  .control-dot.min { background: #eab308; opacity: 0.8; }
+  .control-dot.max { background: #22c55e; opacity: 0.8; }
+
+  .terminal-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.72rem;
+    color: var(--color-text-sub);
+  }
+
+  .terminal-shortcut {
+    color: var(--color-text-hud);
+    font-size: 0.68rem;
+  }
+
+  /* Quick Command Pills */
+  .terminal-quick-cmds {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.6rem 1rem;
+    background: rgba(0, 0, 0, 0.4);
+    border-bottom: 1px solid var(--color-border-subtle);
+    overflow-x: auto;
+  }
+
+  .cmd-pill {
+    padding: 0.22rem 0.65rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-xs);
+    color: var(--color-text-muted);
+    font-size: 0.7rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all var(--transition-fast);
+  }
+
+  .cmd-pill:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--color-border-hover);
+  }
+
+  .cmd-pill.active-pill {
+    color: var(--color-accent-green);
+    border-color: rgba(34, 197, 94, 0.35);
+  }
+
+  .cmd-pill.clear-btn {
+    margin-left: auto;
+    color: var(--color-accent-red);
+    border-color: rgba(239, 68, 68, 0.25);
+  }
+
+  .cmd-pill.clear-btn:hover {
+    background: rgba(239, 68, 68, 0.15);
+  }
+
+  /* Screen */
+  .terminal-screen {
+    padding: 1.25rem 1rem;
+    min-height: 220px;
+    max-height: 340px;
+    overflow-y: auto;
+    font-size: 0.78rem;
+    line-height: 1.65;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .term-line {
+    word-break: break-word;
+  }
+
+  .text-white { color: #ffffff; font-weight: 600; }
+  .text-green { color: var(--color-accent-green); }
+  .text-red { color: var(--color-accent-red); }
+  .text-muted { color: var(--color-text-muted); }
+
+  /* Input Row */
+  .terminal-input-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.75rem 1rem;
+    background: rgba(0, 0, 0, 0.5);
+    border-top: 1px solid var(--color-border-subtle);
+  }
+
+  .prompt-sym {
+    color: var(--color-accent-green);
+    font-size: 0.78rem;
+    white-space: nowrap;
+  }
+
+  .cli-input {
+    flex: 1;
+    color: #ffffff;
+    font-size: 0.8rem;
+    outline: none;
+    border: none;
+    background: transparent;
+  }
+
+  .cli-input::placeholder {
+    color: var(--color-text-hud);
+  }
+
+  .cli-submit-btn {
+    padding: 0.25rem 0.65rem;
+    border-radius: var(--radius-xs);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--color-border-subtle);
+    color: var(--color-text-muted);
+    font-size: 0.7rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .cli-submit-btn:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  @media (max-width: 640px) {
+    .terminal-shortcut {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  function initAboutTerminal() {
+    const form = document.getElementById("terminal-form") as HTMLFormElement | null;
+    const input = document.getElementById("cli-input") as HTMLInputElement | null;
+    const screen = document.getElementById("terminal-screen");
+    const quickBtns = document.querySelectorAll(".cmd-pill");
+
+    if (!form || !input || !screen) return;
+
+    const commands: Record<string, string> = {
+      help: `
+<span class="text-white">COMMAND DIRECTORY:</span>
+  • <span class="text-green">bio</span>          : Overview, engineering philosophy, and focus
+  • <span class="text-green">education</span>    : Degree, honors, and academic background
+  • <span class="text-green">leadership</span>   : Shiba Re-Ignite organization presidency
+  • <span class="text-green">certs</span>        : Google Cybersecurity, AI & Agile credentials
+  • <span class="text-green">stack</span>        : Core languages, frameworks & cloud tools
+  • <span class="text-green">contact</span>      : Direct email, GitHub, and location
+  • <span class="text-green">clear</span>        : Reset terminal buffer
+`,
+      bio: `
+<span class="text-white">BIO &amp; ENGINEERING PHILOSOPHY:</span>
+  • Based in <span class="text-green">BGC, Taguig, Philippines</span>.
+  • Computer Science graduate specializing in Full-Stack Web Development, AI Workflows,
+    and high-performance interactive architectures.
+  • Combines strong leadership from competitive hackathons with hands-on experience
+    shipping resilient MVPs using modern frameworks (React, Next.js, FastAPI, Docker).
+  • Passionate about fluid 60+ FPS zero-dependency graphics and zero-downtime systems.
+`,
+      education: `
+<span class="text-white">ACADEMIC BACKGROUND:</span>
+  • <span class="text-green">STI College Lucena</span> (Aug 2022 – July 2026)
+    - Bachelor of Science in Computer Science
+    - Honors: <span class="text-white">Dean's Lister (2022 – 2025)</span>
+  • <span class="text-green">STI College Lucena — Senior High School</span> (2020 – 2022)
+    - Track: Mobile App &amp; Web Development
+    - Honors: <span class="text-white">With High Honors</span>
+`,
+      leadership: `
+<span class="text-white">LEADERSHIP &amp; ORGANIZATIONS:</span>
+  • <span class="text-green">Shiba Re-Ignite Organization (STI College)</span>
+    - <span class="text-white">President</span> (Oct 2024 – Present): Manage esports tournaments,
+      direct technical seminars, and coordinate IT workshops and student certifications.
+    - <span class="text-white">Vice-President</span> (Oct 2023 – Oct 2024): Supported tech programs.
+    - <span class="text-white">Secretary</span> (Oct 2022 – Oct 2023): Handled member communications.
+`,
+      certs: `
+<span class="text-white">VERIFIED GOOGLE CERTIFICATIONS:</span>
+  • Google Network Security Specialization (Issued March 2026)
+  • Foundations of Cybersecurity &amp; Security Hardening
+  • Google AI Specialization (App Building, Data Analysis &amp; Workflows)
+  • Google Agile Essentials &amp; Scrum Framework Implementation
+  • Google Data Analysis with Python (Data Structures, OS Automation)
+`,
+      stack: `
+<span class="text-white">TECHNICAL ARSENAL:</span>
+  • Core: TypeScript, JavaScript, Python, C#, Java, SQL
+  • Frontend: React, Next.js, Tailwind CSS, Astro, TanStack Query, GSAP, Radix UI
+  • Backend: Node.js, FastAPI, PostgreSQL, Supabase, Firebase
+  • DevOps: Docker, Kubernetes, CI/CD GitHub Actions, GCP, Azure, n8n
+`,
+      contact: `
+<span class="text-white">TRANSMISSION CHANNELS:</span>
+  • Email: <a href="mailto:kikzafable@gmail.com" class="text-green">kikzafable@gmail.com</a>
+  • Phone: <span class="text-white">(+63) 9567331807</span>
+  • GitHub: <a href="https://github.com/Kikkoman-4" target="_blank" class="text-green">github.com/Kikkoman-4</a>
+  • Location: BGC, Taguig, Philippines
+`,
+    };
+
+    function execute(rawCmd: string) {
+      const cmd = rawCmd.trim().toLowerCase();
+      if (!cmd) return;
+
+      if (cmd === "clear") {
+        screen!.innerHTML = `
+          <div class="term-line output-init">
+            <span class="text-white">Console buffer cleared.</span><br />
+            <span class="text-muted">Type <span class="text-green">'help'</span> for command listing.</span>
+          </div>`;
+        return;
+      }
+
+      // Append user command
+      const cmdLine = document.createElement("div");
+      cmdLine.className = "term-line";
+      cmdLine.innerHTML = `<span class="prompt-sym">kikz@dev:~$</span> <span class="text-white">${rawCmd}</span>`;
+      screen!.appendChild(cmdLine);
+
+      // Append output
+      const respLine = document.createElement("div");
+      respLine.className = "term-line";
+
+      if (commands[cmd]) {
+        respLine.innerHTML = commands[cmd];
+      } else {
+        respLine.innerHTML = `<span class="text-red">command not found: '${rawCmd}'</span>. Type <span class="text-green">'help'</span> for list.`;
+      }
+
+      screen!.appendChild(respLine);
+      screen!.scrollTop = screen!.scrollHeight;
+    }
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const val = input.value;
+      if (val) {
+        execute(val);
+        input.value = "";
+      }
+    });
+
+    quickBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const cmd = btn.getAttribute("data-run");
+        if (cmd) execute(cmd);
+      });
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initAboutTerminal);
+  } else {
+    initAboutTerminal();
+  }
+</script>
